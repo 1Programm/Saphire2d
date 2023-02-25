@@ -1,6 +1,6 @@
 package com.programm.ge.saphire2d.test;
 
-import com.programm.ge.saphire2d.engine.Test;
+import com.programm.ge.saphire2d.engine.LWJGLTest;
 import com.programm.ioutils.log.api.ILogger;
 import com.programm.ioutils.log.api.Logger;
 import com.programm.ioutils.log.jlogger.JLogger;
@@ -8,16 +8,18 @@ import com.programm.ioutils.log.jlogger.JLogger;
 @Logger("Main")
 public class Main {
 
-    private static final String DEFAULT_LOG_FORMAT = "[$TIME] [%5<($LVL)] [%30>($LOG?{$CLS.$MET})]: $MSG";
-
-    public static void main(String[] args) {
+    private static JLogger createLogger(){
         JLogger log = new JLogger();
-        log.format(DEFAULT_LOG_FORMAT);
+        log.format("[$TIME] [%5<($LVL)] [%30>($LOG?{$CLS.$MET})]: $MSG");
         log.printStacktraceForExceptions(true);
         log.level(ILogger.LEVEL_INFO);
 
-        log.info("Hello");
-        Test.testMethod(log);
+        return log;
+    }
+
+    public static void main(String[] args) {
+        JLogger log = createLogger();
+        LWJGLTest.main(args);
     }
 
 }
