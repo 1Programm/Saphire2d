@@ -18,4 +18,12 @@
         <maven.compiler.target>16</maven.compiler.target>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.programm.ioutils</groupId>
+            <artifactId>ioutils-log-api</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+    </dependencies>
+
 </project>

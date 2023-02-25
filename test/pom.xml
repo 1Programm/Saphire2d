@@ -17,4 +17,19 @@
         <maven.compiler.target>16</maven.compiler.target>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.programm.ge</groupId>
+            <artifactId>saphire2d-engine</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.programm.ioutils</groupId>
+            <artifactId>ioutils-log-jlogger</artifactId>
+            <version>1.0.6</version>
+        </dependency>
+    </dependencies>
+
 </project>
