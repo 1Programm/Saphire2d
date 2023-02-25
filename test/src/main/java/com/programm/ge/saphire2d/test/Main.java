@@ -1,6 +1,7 @@
 package com.programm.ge.saphire2d.test;
 
-import com.programm.ge.saphire2d.engine.LWJGLTest;
+import com.programm.ge.saphire2d.engine.SaphEngine;
+import com.programm.ge.saphire2d.engine.SaphWindow;
 import com.programm.ioutils.log.api.ILogger;
 import com.programm.ioutils.log.api.Logger;
 import com.programm.ioutils.log.jlogger.JLogger;
@@ -19,7 +20,19 @@ public class Main {
 
     public static void main(String[] args) {
         JLogger log = createLogger();
-        LWJGLTest.main(args);
+
+        SaphEngine engine = new SaphEngine();
+        engine.init();
+
+        SaphWindow window = engine.createWindow("Hello World!", 600, 500);
+        window.centerWindow();
+        window.visible(true);
+
+        engine.run(window);
+
+
+        window.cleanup();
+        engine.cleanup();
     }
 
 }
