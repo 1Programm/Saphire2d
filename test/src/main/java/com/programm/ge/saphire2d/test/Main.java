@@ -1,7 +1,9 @@
 package com.programm.ge.saphire2d.test;
 
 import com.programm.ge.saphire2d.engine.SaphEngine;
+import com.programm.ge.saphire2d.engine.SaphObjectHandler;
 import com.programm.ge.saphire2d.engine.SaphWindow;
+import com.programm.ge.saphire2d.engine.model.GObject;
 import com.programm.ge.saphire2d.engine.model.RawModel;
 import com.programm.ge.saphire2d.engine.model.Texture;
 import com.programm.ge.saphire2d.engine.model.TexturedModel;
@@ -9,6 +11,12 @@ import com.programm.ge.saphire2d.engine.utils.ModelLoader;
 import com.programm.ioutils.log.api.ILogger;
 import com.programm.ioutils.log.api.Logger;
 import com.programm.ioutils.log.jlogger.JLogger;
+import org.joml.Matrix4f;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Logger("Main")
 public class Main {
@@ -28,12 +36,39 @@ public class Main {
         SaphEngine engine = new SaphEngine("Hello World!", 600, 500);
 //        engine.debugMode();
 
-        RawModel myModel = createQuad();
-        Texture texTest = ModelLoader.loadTexture2("/textures/Test.png");
-        TexturedModel tModel = new TexturedModel(myModel, texTest);
+        RawModel quadModel = createQuad();
+        TexturedModel quad1 = new TexturedModel(quadModel, ModelLoader.loadTexture2("/textures/Test.png", 1));
 
 
-        engine.run(tModel);
+        SaphObjectHandler handler = new SaphObjectHandler();
+
+        GObject obj = new GObject();
+        obj.textureIndex = 2;
+        obj.size.set(100, 100);
+        obj.position.set(50, 50, 0);
+        handler.add(quad1, obj);
+
+        obj = new GObject();
+        obj.textureIndex = 3;
+        obj.size.set(100, 100);
+        obj.position.set(160, 50, 0);
+        handler.add(quad1, obj);
+
+        obj = new GObject();
+        obj.textureIndex = 0;
+        obj.size.set(100, 100);
+        obj.position.set(50, 160, 0);
+        handler.add(quad1, obj);
+
+        obj = new GObject();
+        obj.textureIndex = 1;
+        obj.size.set(100, 100);
+        obj.position.set(160, 160, 0);
+        handler.add(quad1, obj);
+
+
+
+        engine.run(handler);
 
 
         ModelLoader.cleanup();

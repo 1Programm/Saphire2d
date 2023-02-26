@@ -7,14 +7,15 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.stb.STBImage;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class ModelLoader {
     private static final List<Integer> VBOS = new ArrayList<>();
     private static final List<Integer> TEXTURES = new ArrayList<>();
 
-    public static Texture loadTexture2(String name){
+    public static Texture loadTexture2(String name, int numRows){
         BufferedImage image;
         try {
             InputStream is = ModelLoader.class.getResourceAsStream(name);
@@ -60,62 +61,62 @@ public class ModelLoader {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 
-        return new Texture(textureID);
+        return new Texture(textureID, numRows);
     }
 
-    public static Texture loadTexture(String name){
-        InputStream is = ModelLoader.class.getResourceAsStream(name);
-        if(is == null) throw new RuntimeException("Could not find resource: [" + name + "]!");
-
-        byte[] imageBytes;
-        try {
-            imageBytes = is.readAllBytes();
-        }
-        catch (IOException e){
-            throw new RuntimeException("Failed to read bytes from resource image: [" + name + "]!", e);
-        }
-
-        ByteBuffer buffer = BufferUtils.createByteBuffer(imageBytes.length);
-        buffer.put(imageBytes);
-        buffer.flip();
-
-        int[] width = new int[1];
-        int[] height = new int[1];
-        int[] channels = new int[1];
-        ByteBuffer data = STBImage.stbi_load_from_memory(buffer, width, height, channels, 0);
-
-        if(data == null) throw new RuntimeException("Failed to load image: [" + name + "]!");
-
-        return _loadTexture(data, width[0], height[0]);
-    }
-
-    public static Texture loadTextureFromAbsulutePath(String name){
-        int[] width = new int[1];
-        int[] height = new int[1];
-        int[] channels = new int[1];
-        ByteBuffer data = STBImage.stbi_load(name, width, height, channels, 0);
-
-        if(data == null) throw new RuntimeException("Failed to load image: [" + name + "]!");
-
-        return _loadTexture(data, width[0], height[0]);
-    }
-
-    private static Texture _loadTexture(ByteBuffer data, int width, int height){
-        int textureID = GL11.glGenTextures();
-        TEXTURES.add(textureID);
-
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
-
-//        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
-//        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, width, height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, data);
-//        GL30.glGenerateMipmap(textureID);
-
-//        STBImage.stbi_image_free(data);
-
-        return new Texture(textureID);
-    }
+//    public static Texture loadTexture(String name){
+//        InputStream is = ModelLoader.class.getResourceAsStream(name);
+//        if(is == null) throw new RuntimeException("Could not find resource: [" + name + "]!");
+//
+//        byte[] imageBytes;
+//        try {
+//            imageBytes = is.readAllBytes();
+//        }
+//        catch (IOException e){
+//            throw new RuntimeException("Failed to read bytes from resource image: [" + name + "]!", e);
+//        }
+//
+//        ByteBuffer buffer = BufferUtils.createByteBuffer(imageBytes.length);
+//        buffer.put(imageBytes);
+//        buffer.flip();
+//
+//        int[] width = new int[1];
+//        int[] height = new int[1];
+//        int[] channels = new int[1];
+//        ByteBuffer data = STBImage.stbi_load_from_memory(buffer, width, height, channels, 0);
+//
+//        if(data == null) throw new RuntimeException("Failed to load image: [" + name + "]!");
+//
+//        return _loadTexture(data, width[0], height[0]);
+//    }
+//
+//    public static Texture loadTextureFromAbsulutePath(String name){
+//        int[] width = new int[1];
+//        int[] height = new int[1];
+//        int[] channels = new int[1];
+//        ByteBuffer data = STBImage.stbi_load(name, width, height, channels, 0);
+//
+//        if(data == null) throw new RuntimeException("Failed to load image: [" + name + "]!");
+//
+//        return _loadTexture(data, width[0], height[0]);
+//    }
+//
+//    private static Texture _loadTexture(ByteBuffer data, int width, int height){
+//        int textureID = GL11.glGenTextures();
+//        TEXTURES.add(textureID);
+//
+//        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+//
+////        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
+////        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+//
+//        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, width, height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, data);
+////        GL30.glGenerateMipmap(textureID);
+//
+////        STBImage.stbi_image_free(data);
+//
+//        return new Texture(textureID);
+//    }
 
     public static RawModel loadModel(int dim, float[] positions, int[] indices){
         int vaoID = createVAO();

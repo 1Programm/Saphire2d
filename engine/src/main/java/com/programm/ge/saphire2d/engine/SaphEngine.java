@@ -1,8 +1,10 @@
 package com.programm.ge.saphire2d.engine;
 
+import com.programm.ge.saphire2d.engine.model.GObject;
 import com.programm.ge.saphire2d.engine.model.TexturedModel;
 import com.programm.ge.saphire2d.engine.shader.TestShader1;
-import com.programm.ge.saphire2d.engine.utils.ShaderUtils;
+import com.programm.ge.saphire2d.engine.utils.MathUtils;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -20,6 +22,13 @@ public class SaphEngine {
 
         //Shader shader = ShaderUtils.createShader("/shaders/TestShader1");
         TestShader1 shader = new TestShader1();
+        shader.start();
+        Matrix4f mat = new Matrix4f();
+        MathUtils.orthoProjection(mat, 0, 0, width, height);
+        shader.loadProjectionMatrix(mat);
+        shader.stop();
+
+//        GL11.glViewport(0, 0, width, height);
         renderer = new SaphRenderer(shader);
     }
 
@@ -63,10 +72,10 @@ public class SaphEngine {
         return window;
     }
 
-    public void run(TexturedModel texturedModel){
+    public void run(SaphObjectHandler handler){
         while(!window.shouldClose()){
             renderer.prepare();
-            renderer.renderModel(texturedModel);
+            renderer.render(handler);
 
             GLFW.glfwSwapBuffers(window.id());
 

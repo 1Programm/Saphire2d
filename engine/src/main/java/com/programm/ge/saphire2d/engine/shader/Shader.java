@@ -42,6 +42,10 @@ public abstract class Shader {
         GL20.glUniform1f(location, v);
     }
 
+    protected final void loadFloat2(int location, float x, float y){
+        GL20.glUniform2f(location, x, y);
+    }
+
     protected final void loadVector(int location, Vector2f v){
         GL20.glUniform2f(location, v.x, v.y);
     }
@@ -52,8 +56,7 @@ public abstract class Shader {
 
     protected final void loadMatrix(int location, Matrix4f v){
         v.get(MATRIX_BUFFER);
-        MATRIX_BUFFER.flip();
-        GL20.glUniformMatrix2fv(location, false, MATRIX_BUFFER);
+        GL20.glUniformMatrix4fv(location, false, MATRIX_BUFFER);
     }
 
     public final void start(){

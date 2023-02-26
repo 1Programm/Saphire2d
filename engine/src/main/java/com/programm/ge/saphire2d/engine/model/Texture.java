@@ -6,5 +6,6 @@ import lombok.RequiredArgsConstructor;
 public class Texture {
 
     public final int textureID;
+    public final int numberOfRows;
 
 }
