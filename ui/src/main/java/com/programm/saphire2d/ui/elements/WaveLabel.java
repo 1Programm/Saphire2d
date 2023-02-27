@@ -13,13 +13,13 @@ public class WaveLabel extends AbstractTextComponent {
             Vector4f color = GFXUtils.mixColor(c.textColor, c.disabledColor(), c.disabled());
 
             if(c.textAlign == ILayout.ALIGN_CENTER) {
-                pen.drawStringCentered(c.text, bounds.x() + bounds.width() / 2, bounds.y() + bounds.height() / 2, color);
+                pen.drawStringCentered(c.text, bounds.x() + bounds.width() / 2, bounds.y() + bounds.height() / 2, color, c.fontSize());
             }
             else if(c.textAlign == ILayout.ALIGN_LEFT){
-                pen.drawStringVCentered(c.text, bounds.x() + 2, bounds.y() + bounds.height() / 2, color);
+                pen.drawStringVCentered(c.text, bounds.x() + 2, bounds.y() + bounds.height() / 2, color, c.fontSize());
             }
             else if(c.textAlign == ILayout.ALIGN_RIGHT){
-                pen.drawStringVCenteredRightAligned(c.text, bounds.x() - 2, bounds.y() + bounds.height() / 2, bounds.width(), color);
+                pen.drawStringVCenteredRightAligned(c.text, bounds.x() - 2, bounds.y() + bounds.height() / 2, bounds.width(), color, c.fontSize());
             }
         }
     }

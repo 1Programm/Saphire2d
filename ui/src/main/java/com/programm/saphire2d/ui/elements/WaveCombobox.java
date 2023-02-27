@@ -118,7 +118,7 @@ public class WaveCombobox<T> extends AbstractTextComponent {
         if(minWidth == null){
             for(int i=0;i<items.size();i++) {
                 String _item = items.get(i).toString();
-                float itemMinWidth = pen.stringWidth(_item);
+                float itemMinWidth = pen.stringWidth(_item, fontSize());
                 if(minWidth == null){
                     minWidth = itemMinWidth;
                 }
@@ -138,7 +138,7 @@ public class WaveCombobox<T> extends AbstractTextComponent {
     @Override
     public Float minHeight(IPencil pen) {
         if(minHeight == null){
-            minHeight = pen.stringHeight();
+            minHeight = pen.stringHeight(fontSize());
         }
 
         return minHeight;

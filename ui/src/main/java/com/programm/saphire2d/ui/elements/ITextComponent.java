@@ -11,6 +11,9 @@ public interface ITextComponent extends SUIRenderable {
     void textColor(Vector4f textColor);
     Vector4f textColor();
 
+    void fontSize(float fontSize);
+    float fontSize();
+
     void textAlign(int textAlign);
     int textAlign();
 

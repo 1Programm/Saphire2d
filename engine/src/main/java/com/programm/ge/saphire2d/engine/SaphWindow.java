@@ -10,6 +10,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 
 public class SaphWindow implements IBounds {
 
+    private final SaphEngine engine;
     private final long windowID;
     private boolean visible;
     private int width, height;
@@ -19,7 +20,8 @@ public class SaphWindow implements IBounds {
 
     public IComponent ui;
 
-    public SaphWindow(long windowID) {
+    public SaphWindow(SaphEngine engine, long windowID) {
+        this.engine = engine;
         this.windowID = windowID;
 
         mouse = new SaphMouse(this);
@@ -43,6 +45,8 @@ public class SaphWindow implements IBounds {
     private void resizeCallback(long windowID, int width, int height){
         this.width = width;
         this.height = height;
+
+        engine.onWindowResize(width, height);
     }
 
     public void cleanup(){
@@ -119,6 +123,10 @@ public class SaphWindow implements IBounds {
     @Override
     public float height(){
         return height;
+    }
+
+    public float aspectRatio(){
+        return width() / height();
     }
 
     public boolean shouldClose(){

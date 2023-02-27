@@ -3,14 +3,14 @@ package com.programm.ge.saphire2d.engine.shader;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
-public class UiLineShader extends Shader {
+public class UIRectangleShader extends Shader {
 
     private int projection_loc;
     private int transform_loc;
     private int color_loc;
 
-    public UiLineShader() {
-        super("/shaders/ui/lineShader");
+    public UIRectangleShader() {
+        super("/shaders/ui/rectShader");
     }
 
     @Override

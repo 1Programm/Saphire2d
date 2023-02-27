@@ -2,17 +2,24 @@ package com.programm.ge.saphire2d.engine.model.font;
 
 import lombok.RequiredArgsConstructor;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
 public class MetaFile {
 
-	public static MetaFile load(File file, double aspectRatio) {
+	private static final int PAD_TOP = 0;
+	private static final int PAD_LEFT = 1;
+	private static final int PAD_BOTTOM = 2;
+	private static final int PAD_RIGHT = 3;
+
+	private static final int DESIRED_PADDING = 3;
+
+	private static final String SPLITTER = " ";
+	private static final String NUMBER_SEPARATOR = ",";
+
+	public static MetaFile load(String path, double aspectRatio) {
 		Map<Integer, Character> metaData = new HashMap<>();
 		double spaceWidth = 0;
 
@@ -22,16 +29,14 @@ public class MetaFile {
 		int[] padding;
 		int paddingWidth;
 		int paddingHeight;
-		BufferedReader reader;
 		final Map<String, String> values = new HashMap<>();
 
 
 
-		try {
-			reader = new BufferedReader(new FileReader(file));
-		} catch (IOException e) {
-			throw new RuntimeException("Could not read font-meta-file [" + file.getPath() + "]!", e);
-		}
+		InputStream is = MetaFile.class.getResourceAsStream(path);
+		if(is == null) throw new RuntimeException("Could not read font-meta-file [" + path + "]!");
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
 
 
@@ -68,8 +73,8 @@ public class MetaFile {
 			double xOff = (getValueOfVariable(values, "xoffset") + padding[PAD_LEFT] - DESIRED_PADDING) * horizontalPerPixelSize;
 			double yOff = (getValueOfVariable(values, "yoffset") + (padding[PAD_TOP] - DESIRED_PADDING)) * verticalPerPixelSize;
 			double xAdvance = (getValueOfVariable(values, "xadvance") - paddingWidth) * horizontalPerPixelSize;
-			Character c = new Character(id, xTex, yTex, xTexSize, yTexSize, xOff, yOff, quadWidth, quadHeight, xAdvance);
-			metaData.put(c.id, c);
+//			Character c = new Character(id, xTex, yTex, xTexSize, yTexSize, xOff, yOff, quadWidth, quadHeight, xAdvance);
+//			metaData.put(c.id, c);
 		}
 
 		try {
@@ -125,20 +130,11 @@ public class MetaFile {
 
 
 
-	private static final int PAD_TOP = 0;
-	private static final int PAD_LEFT = 1;
-	private static final int PAD_BOTTOM = 2;
-	private static final int PAD_RIGHT = 3;
-
-	private static final int DESIRED_PADDING = 3;
-
-	private static final String SPLITTER = " ";
-	private static final String NUMBER_SEPARATOR = ",";
 
 	private final Map<Integer, Character> metaData;
 	public final double spaceWidth;
 
-	protected Character getCharacter(int ascii) {
+	public Character getCharacter(int ascii) {
 		return metaData.get(ascii);
 	}
 

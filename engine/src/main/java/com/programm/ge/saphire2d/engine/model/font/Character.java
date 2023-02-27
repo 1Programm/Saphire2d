@@ -6,14 +6,14 @@ import lombok.RequiredArgsConstructor;
 public class Character {
 
 	public final int id;
-	public final double texCoordX;
-	public final double texCoordY;
-	public final double texCoordMaxX;
-	public final double texCoordMaxY;
-	public final double offX;
-	public final double offY;
-	public final double width;
-	public final double height;
-	public final double xAdvance;
+	public final float texCoordX;
+	public final float texCoordY;
+	public final float texCoordMaxX;
+	public final float texCoordMaxY;
+	public final float offX;
+	public final float offY;
+	public final float width;
+	public final float height;
+	public final float xAdvance;
 
 }

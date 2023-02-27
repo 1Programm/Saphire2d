@@ -2,21 +2,13 @@ package com.programm.ge.saphire2d.test;
 
 import com.programm.ge.saphire2d.engine.SaphEngine;
 import com.programm.ge.saphire2d.engine.SaphObjectHandler;
-import com.programm.ge.saphire2d.engine.SaphWindow;
 import com.programm.ge.saphire2d.engine.model.GObject;
 import com.programm.ge.saphire2d.engine.model.RawModel;
-import com.programm.ge.saphire2d.engine.model.Texture;
 import com.programm.ge.saphire2d.engine.model.TexturedModel;
 import com.programm.ge.saphire2d.engine.utils.ModelLoader;
 import com.programm.ioutils.log.api.ILogger;
 import com.programm.ioutils.log.api.Logger;
 import com.programm.ioutils.log.jlogger.JLogger;
-import org.joml.Matrix4f;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Logger("Main")
 public class Main {
@@ -37,7 +29,7 @@ public class Main {
 //        engine.debugMode();
 
         RawModel quadModel = createQuad();
-        TexturedModel quad1 = new TexturedModel(quadModel, ModelLoader.loadTexture2("/textures/Test.png", 1));
+        TexturedModel quad1 = new TexturedModel(quadModel, ModelLoader.loadTexture("/textures/Test.png", 1));
 
 
         SaphObjectHandler handler = new SaphObjectHandler();

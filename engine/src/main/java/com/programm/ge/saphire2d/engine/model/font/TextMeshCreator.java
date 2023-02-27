@@ -13,7 +13,7 @@ public class TextMeshCreator {
 
 	protected TextMeshCreator(File metaFile, double aspectRatio) {
 //		metaData = new MetaFile(metaFile);
-		metaData = MetaFile.load(metaFile, aspectRatio);
+		metaData = null;//MetaFile.load(metaFile, aspectRatio);
 	}
 
 	protected TextMeshData createTextMesh(GUIText text) {

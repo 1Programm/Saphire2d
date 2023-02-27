@@ -24,7 +24,7 @@ public class ModelLoader {
     private static final List<Integer> VBOS = new ArrayList<>();
     private static final List<Integer> TEXTURES = new ArrayList<>();
 
-    public static Texture loadTexture2(String name, int numRows){
+    public static Texture loadTexture(String name, int numRows){
         BufferedImage image;
         try {
             InputStream is = ModelLoader.class.getResourceAsStream(name);

@@ -5,9 +5,9 @@ import org.joml.Vector4f;
 
 public interface IPencil {
 
-    float stringWidth(String s);
+    float stringWidth(String s, float fontSize);
 
-    float stringHeight();
+    float stringHeight(float fontSize);
 
 
 
@@ -43,15 +43,15 @@ public interface IPencil {
 
 
 
-    void drawString(String s, float x, float y, Vector4f color);
+    void drawString(String s, float x, float y, Vector4f color, float fontSize);
 
-    void drawStringCentered(String s, float x, float y, Vector4f color);
+    void drawStringCentered(String s, float x, float y, Vector4f color, float fontSize);
 
-    void drawStringVCentered(String s, float x, float y, Vector4f color);
+    void drawStringVCentered(String s, float x, float y, Vector4f color, float fontSize);
 
-    void drawStringVCenteredRightAligned(String s, float x, float y, float width, Vector4f color);
+    void drawStringVCenteredRightAligned(String s, float x, float y, float width, Vector4f color, float fontSize);
 
-    void drawStringHCentered(String s, float x, float y, Vector4f color);
+    void drawStringHCentered(String s, float x, float y, Vector4f color, float fontSize);
 
 
 

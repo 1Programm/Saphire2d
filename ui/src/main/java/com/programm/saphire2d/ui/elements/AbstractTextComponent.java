@@ -11,6 +11,7 @@ public abstract class AbstractTextComponent extends SUIComponent implements ITex
     protected String text;
     protected Vector4f textColor = Colors.BLACK;
     protected int textAlign = ILayout.ALIGN_CENTER;
+    private float fontSize = 21;
 
     protected Float minWidth, minHeight;
 
@@ -23,7 +24,7 @@ public abstract class AbstractTextComponent extends SUIComponent implements ITex
     @Override
     public Float minWidth(IPencil pen) {
         if(minWidth == null){
-            minWidth = pen.stringWidth(text) + 4;
+            minWidth = pen.stringWidth(text, fontSize) + 4;
         }
 
         return minWidth;
@@ -32,7 +33,7 @@ public abstract class AbstractTextComponent extends SUIComponent implements ITex
     @Override
     public Float minHeight(IPencil pen) {
         if(minHeight == null){
-            minHeight = pen.stringHeight() + 4;
+            minHeight = pen.stringHeight(fontSize) + 4;
         }
 
         return minHeight;
@@ -57,6 +58,16 @@ public abstract class AbstractTextComponent extends SUIComponent implements ITex
     @Override
     public Vector4f textColor(){
         return textColor;
+    }
+
+    @Override
+    public void fontSize(float fontSize) {
+        this.fontSize = fontSize;
+    }
+
+    @Override
+    public float fontSize() {
+        return fontSize;
     }
 
     @Override

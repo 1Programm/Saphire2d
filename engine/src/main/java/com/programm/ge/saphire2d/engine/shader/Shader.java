@@ -13,15 +13,25 @@ public abstract class Shader {
 
     private final int programID;
 
-    public Shader(int programID) {
-        this.programID = programID;
+    public Shader(String path){
+        try {
+            this.programID = ShaderUtils.createVertFragShader(path);
+        }
+        catch (RuntimeException e){
+            throw new RuntimeException("Failed to create shader program [" + path + "]!", e);
+        }
+        try {
+            initShader();
+        }
+        catch (RuntimeException e){
+            throw new RuntimeException("Failed to link shader [" + path + "]!", e);
+        }
+    }
+
+    private void initShader(){
         bindAttributes();
         ShaderUtils.linkShader(programID);
         loadUniformLocations();
-    }
-
-    public Shader(String path){
-        this(ShaderUtils.createVertFragShader(path));
     }
 
     protected abstract void bindAttributes();

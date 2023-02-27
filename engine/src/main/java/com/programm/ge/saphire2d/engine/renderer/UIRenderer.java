@@ -2,14 +2,19 @@ package com.programm.ge.saphire2d.engine.renderer;
 
 import com.programm.ge.saphire2d.engine.SaphWindow;
 import com.programm.ge.saphire2d.engine.model.RawModel;
-import com.programm.ge.saphire2d.engine.shader.UiLineShader;
-import com.programm.ge.saphire2d.engine.shader.UiRectangleShader;
+import com.programm.ge.saphire2d.engine.model.Texture;
+import com.programm.ge.saphire2d.engine.model.font.Character;
+import com.programm.ge.saphire2d.engine.model.font.MyFontMeta;
+import com.programm.ge.saphire2d.engine.shader.UILineShader;
+import com.programm.ge.saphire2d.engine.shader.UIRectangleShader;
+import com.programm.ge.saphire2d.engine.shader.UITextShader;
 import com.programm.ge.saphire2d.engine.utils.ModelLoader;
 import com.programm.saphire2d.ui.IPencil;
 import lombok.RequiredArgsConstructor;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
@@ -36,27 +41,38 @@ public class UIRenderer implements IPencil {
         final float edge;
     }
 
+    @RequiredArgsConstructor
+    private static class TextInfo {
+        final float x, y;
+        final float depth;
+        final Vector4f color;
+        final String text;
+        final float fontSize;
+    }
+
     private static final Matrix4f TRANSFORM_MATRIX = new Matrix4f();
 
     private final SaphWindow window;
     private final RawModel rawLineModel;
     private final RawModel rawRectModel;
+    private final RawModel rawTextureRectModel;
+
+    private final Texture fontTexture;
+    private final MyFontMeta fontMetaFile;
 
     private final List<LineInfo> lineInfoList = new ArrayList<>();
     private final List<RectInfo> rectInfoList = new ArrayList<>();
+    private final List<TextInfo> textInfoList = new ArrayList<>();
 
-    private final UiRectangleShader rectShader = new UiRectangleShader();
-    private final UiLineShader lineShader = new UiLineShader();
+    private final UIRectangleShader rectShader = new UIRectangleShader();
+    private final UILineShader lineShader = new UILineShader();
+    private final UITextShader textShader = new UITextShader();
+
     private float curDepth;
 
 
     public UIRenderer(SaphWindow window) {
         this.window = window;
-//        rawLineModel = ModelLoader.loadLineModel(2,
-//                new float[]{
-//                        0.0f, 0.0f,
-//                        1.0f, 0.0f,
-//                });
         rawLineModel = ModelLoader.loadModel(2,
                 new float[]{
                         0.0f,  0.5f,
@@ -81,6 +97,26 @@ public class UIRenderer implements IPencil {
                         3,1,2,
                 }
         );
+        rawTextureRectModel = ModelLoader.loadModel(2, new float[]{
+                        -0.5f,  0.5f, //0
+                        -0.5f, -0.5f, //1
+                         0.5f, -0.5f, //2
+                         0.5f,  0.5f, //3
+                },
+                new float[]{
+                        0.0f, 0.0f,
+                        0.0f, 1.0f,
+                        1.0f, 1.0f,
+                        1.0f, 0.0f,
+                },
+                new int[]{
+                        0,1,3,
+                        3,1,2,
+                }
+        );
+
+        fontTexture = ModelLoader.loadTexture("/ui/fonts/arial.png", 1);
+        fontMetaFile = MyFontMeta.load("/ui/fonts/arial.fnt", window.aspectRatio());
     }
 
     public void init(Matrix4f projectionMatrix){
@@ -90,19 +126,38 @@ public class UIRenderer implements IPencil {
         lineShader.start();
         lineShader.loadProjectionMatrix(projectionMatrix);
         lineShader.stop();
+        textShader.start();
+        textShader.loadProjectionMatrix(projectionMatrix);
+        textShader.stop();
     }
 
 
-    //// =================== ////
+
+
+
+
+    //// =======PENCIL====== ////
 
     @Override
-    public float stringWidth(String s) {
-        return 0;//TODO
+    public float stringWidth(String s, float fontSize) {
+        float width = 0;
+        for(int i=0;i<s.length();i++){
+            char _c = s.charAt(i);
+            if(_c == ' '){
+                width += fontMetaFile.spaceWidth * fontSize;
+                continue;
+            }
+
+            Character c = fontMetaFile.getCharacter(_c);
+            width += c.xAdvance * fontSize;
+        }
+
+        return width;
     }
 
     @Override
-    public float stringHeight() {
-        return 0;
+    public float stringHeight(float fontSize) {
+        return fontMetaFile.lineHeight * fontSize;
     }
 
     @Override
@@ -126,31 +181,42 @@ public class UIRenderer implements IPencil {
     }
 
     @Override
-    public void drawString(String s, float x, float y, Vector4f color) {
-
+    public void drawString(String s, float x, float y, Vector4f color, float fontSize) {
+        textInfoList.add(new TextInfo(x, y, getIncreaseDepth(), color, s, fontSize));
     }
 
     @Override
-    public void drawStringCentered(String s, float x, float y, Vector4f color) {
+    public void drawStringCentered(String s, float x, float y, Vector4f color, float fontSize) {
+        float strWidth = stringWidth(s, fontSize);
+        float strHeight = stringHeight(fontSize);
 
+//        drawRectangle(x - strWidth/2f, y + strHeight/2.5f, strWidth, strHeight, Colors.RED);
+        drawString(s, x - strWidth/2f, y + strHeight/2.5f, color, fontSize);
     }
 
     @Override
-    public void drawStringVCentered(String s, float x, float y, Vector4f color) {
-
+    public void drawStringVCentered(String s, float x, float y, Vector4f color, float fontSize) {
+        float strHeight = stringHeight(fontSize);
+        drawString(s, x, y + strHeight/2.5f, color, fontSize);
     }
 
     @Override
-    public void drawStringVCenteredRightAligned(String s, float x, float y, float width, Vector4f color) {
+    public void drawStringVCenteredRightAligned(String s, float x, float y, float width, Vector4f color, float fontSize) {
+        float strWidth = stringWidth(s, fontSize);
+        float strHeight = stringHeight(fontSize);
 
+        drawString(s, x + width - strWidth, y + strHeight/2.5f, color, fontSize);
     }
 
     @Override
-    public void drawStringHCentered(String s, float x, float y, Vector4f color) {
-
+    public void drawStringHCentered(String s, float x, float y, Vector4f color, float fontSize) {
+        float strWidth = stringWidth(s, fontSize);
+        drawString(s, x - strWidth/2f, y, color, fontSize);
     }
 
     //// =================== ////
+
+
 
     private float getIncreaseDepth(){
         float depth = curDepth;
@@ -198,9 +264,62 @@ public class UIRenderer implements IPencil {
         rectShader.stop();
 
 
+
+
+        textShader.start();
+        GL30.glBindVertexArray(rawTextureRectModel.vaoID);
+        GL20.glEnableVertexAttribArray(0);
+        GL20.glEnableVertexAttribArray(1);
+
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
+        GL13.glBindTexture(GL11.GL_TEXTURE_2D, fontTexture.textureID);
+
+        for(TextInfo info : textInfoList) {
+
+            textShader.loadColor(info.color);
+
+            float curX = info.x;
+            for(int i=0;i<info.text.length();i++){
+                char _c = info.text.charAt(i);
+
+                if(_c == ' '){
+                    curX += fontMetaFile.spaceWidth * info.fontSize;
+                    continue;
+                }
+
+                Character c = fontMetaFile.getCharacter(_c);
+
+
+                getUITransformation(TRANSFORM_MATRIX, curX, info.y + c.offY * info.fontSize, info.depth, c.width * info.fontSize, c.height * info.fontSize);
+                textShader.loadTransformationMatrix(TRANSFORM_MATRIX);
+                textShader.loadTextureOffsetAndScale(c.texCoordX, c.texCoordY, c.texCoordMaxX, c.texCoordMaxY);
+
+                GL11.glDrawElements(GL11.GL_TRIANGLES, rawTextureRectModel.vertexCount, GL11.GL_UNSIGNED_INT, 0);
+
+                curX += c.xAdvance * info.fontSize;
+            }
+
+//            getUITransformation(TRANSFORM_MATRIX, curX, info.y, info.depth, 20, 20);
+//            textShader.loadTransformationMatrix(TRANSFORM_MATRIX);
+////            textShader.loadTextureOffsetAndScale(133 / 512f, 398 / 512f, 44 / 512f, 50 / 512f);
+//            char firstChar = info.text.charAt(0);
+//            Character c = fontMetaFile.getCharacter(firstChar);
+//            textShader.loadTextureOffsetAndScale((float)c.texCoordX, (float)c.texCoordY, (float)c.texCoordMaxX, (float)c.texCoordMaxY);
+//
+//            GL11.glDrawElements(GL11.GL_TRIANGLES, rawTextureRectModel.vertexCount, GL11.GL_UNSIGNED_INT, 0);
+        }
+
+        GL20.glDisableVertexAttribArray(0);
+        GL20.glDisableVertexAttribArray(1);
+        GL30.glBindVertexArray(0);
+        textShader.stop();
+
+
+
         curDepth = 0;
         lineInfoList.clear();
         rectInfoList.clear();
+        textInfoList.clear();
     }
 
     private void getUITransformation(Matrix4f mat, float x, float y, float z, float w, float h){

@@ -2,14 +2,10 @@ package com.programm.ge.saphire2d.engine;
 
 import com.programm.ge.saphire2d.core.bounds.ConstantBounds;
 import com.programm.ge.saphire2d.core.bounds.IBounds;
-import com.programm.ge.saphire2d.engine.controls.SaphKeyboard;
-import com.programm.ge.saphire2d.engine.controls.SaphMouse;
 import com.programm.ge.saphire2d.engine.renderer.SaphRenderer;
 import com.programm.ge.saphire2d.engine.renderer.UIRenderer;
 import com.programm.ge.saphire2d.engine.utils.MathUtils;
 import com.programm.saphire2d.ui.elements.*;
-import com.programm.saphire2d.ui.elements.layout.GridLayout;
-import com.programm.saphire2d.ui.elements.layout.InheritLayout;
 import com.programm.saphire2d.ui.utils.Colors;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
@@ -19,6 +15,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 
 public class SaphEngine {
+
+    private static final Matrix4f PROJECTION_MATRIX = new Matrix4f();
 
     private final SaphWindow window;
 //    private final SaphMouse mouse;
@@ -47,14 +45,13 @@ public class SaphEngine {
 //        shader.loadProjectionMatrix(mat);
 //        shader.stop();
 
-        Matrix4f projectionMatrix = new Matrix4f();
-        MathUtils.orthoProjection(projectionMatrix, 0, 0, width, height);
+        MathUtils.orthoProjection(PROJECTION_MATRIX, 0, 0, width, height);
 
 //        GL11.glViewport(0, 0, width, height);
         renderer = new SaphRenderer();
-        renderer.init(projectionMatrix);
+        renderer.init(PROJECTION_MATRIX);
         uiRenderer = new UIRenderer(window);
-        uiRenderer.init(projectionMatrix);
+        uiRenderer.init(PROJECTION_MATRIX);
     }
 
     public void debugMode(){
@@ -82,7 +79,7 @@ public class SaphEngine {
         long windowId = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
         if (windowId == MemoryUtil.NULL) throw new RuntimeException("Failed to create the GLFW window");
 
-        SaphWindow window = new SaphWindow(windowId);
+        SaphWindow window = new SaphWindow(this, windowId);
         window.init();
 
         window.centerWindow();
@@ -113,6 +110,10 @@ public class SaphEngine {
         while(!window.shouldClose()){
             view.render(b, uiRenderer);
 
+//            System.out.println("StrWidth: " + uiRenderer.stringWidth("Hello World!", 77));
+//            uiRenderer.fillRectangle(100, 100, 428, 77, Colors.LIGHT_GRAY);
+//            uiRenderer.drawString("Hello World!", 100, 100, Colors.BLACK, 77);
+
 
 
 //            uiRenderer.drawLine(0, 0, 100, 100, Colors.RED);
@@ -138,14 +139,25 @@ public class SaphEngine {
 //
 //        tabView.
 
-//        SUIButton btn = new SUIButton("Hello");
-//        btn.listenPressed(() -> System.out.println("Heyyy"));
-//        view.add(btn);
+        SUIButton btn = new SUIButton("Hello");
+        btn.listenPressed(() -> System.out.println("Heyyy"));
+        view.add(btn);
 
-        WaveLabel label = new WaveLabel("My Label");
-        view.add(label);
+//        WaveLabel label = new WaveLabel("My Label");
+//        label.fontSize(50);
+//        view.add(label);
 
 
+
+
+    }
+
+    void onWindowResize(int width, int height) {
+        //Recalculate Projection with new aspectRatio
+        MathUtils.orthoProjection(PROJECTION_MATRIX, 0, 0, width, height);
+
+        renderer.init(PROJECTION_MATRIX);
+        uiRenderer.init(PROJECTION_MATRIX);
     }
 
     public void cleanup(){
