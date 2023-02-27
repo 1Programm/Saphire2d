@@ -1,10 +1,12 @@
-package com.programm.ge.saphire2d.engine;
+package com.programm.ge.saphire2d.engine.renderer;
 
+import com.programm.ge.saphire2d.engine.SaphObjectHandler;
 import com.programm.ge.saphire2d.engine.model.GObject;
 import com.programm.ge.saphire2d.engine.model.RawModel;
 import com.programm.ge.saphire2d.engine.model.TexturedModel;
 import com.programm.ge.saphire2d.engine.shader.TestShader1;
 import lombok.RequiredArgsConstructor;
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -15,11 +17,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SaphRenderer {
 
-    private final TestShader1 shader;
+    private final TestShader1 shader = new TestShader1();
+
+    public void init(Matrix4f projectionMatrix){
+        shader.start();
+        shader.loadProjectionMatrix(projectionMatrix);
+        shader.stop();
+
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+    }
 
     public void prepare() {
-        GL11.glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+        GL11.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     }
 
     public void render(SaphObjectHandler handler){

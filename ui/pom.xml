@@ -2,18 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>saphire2d</artifactId>
+        <groupId>com.programm.ge</groupId>
+        <version>1.0.0</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.programm.ge</groupId>
-    <artifactId>saphire2d</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0.0</version>
-    <modules>
-        <module>test</module>
-        <module>engine</module>
-        <module>ui</module>
-        <module>core</module>
-    </modules>
+    <artifactId>saphire2d-ui</artifactId>
 
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
@@ -22,15 +18,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.programm.ioutils</groupId>
-            <artifactId>ioutils-log-api</artifactId>
-            <version>1.0.3</version>
+            <groupId>com.programm.ge</groupId>
+            <artifactId>saphire2d-core</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
+            <groupId>org.joml</groupId>
+            <artifactId>joml</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

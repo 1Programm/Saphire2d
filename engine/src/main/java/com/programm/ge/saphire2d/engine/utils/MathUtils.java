@@ -34,4 +34,11 @@ public class MathUtils {
         m.scale(size.x, size.y, 1);
     }
 
+//    public static void getTransformation(Matrix4f m, float x, float y, float z, float w, float h){
+//        m.identity();
+//
+//        m.translate(x, y, z);
+//        m.scale(w, h, 1);
+//    }
+
 }

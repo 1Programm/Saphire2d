@@ -1,10 +1,7 @@
 package com.programm.ge.saphire2d.engine.shader;
 
 import com.programm.ge.saphire2d.engine.utils.ShaderUtils;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
+import org.joml.*;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 
@@ -52,6 +49,10 @@ public abstract class Shader {
 
     protected final void loadVector(int location, Vector3f v){
         GL20.glUniform3f(location, v.x, v.y, v.z);
+    }
+
+    protected final void loadVector(int location, Vector4f v){
+        GL20.glUniform4f(location, v.x, v.y, v.z, v.w);
     }
 
     protected final void loadMatrix(int location, Matrix4f v){

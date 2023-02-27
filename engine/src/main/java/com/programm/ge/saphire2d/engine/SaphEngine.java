@@ -1,9 +1,16 @@
 package com.programm.ge.saphire2d.engine;
 
-import com.programm.ge.saphire2d.engine.model.GObject;
-import com.programm.ge.saphire2d.engine.model.TexturedModel;
-import com.programm.ge.saphire2d.engine.shader.TestShader1;
+import com.programm.ge.saphire2d.core.bounds.ConstantBounds;
+import com.programm.ge.saphire2d.core.bounds.IBounds;
+import com.programm.ge.saphire2d.engine.controls.SaphKeyboard;
+import com.programm.ge.saphire2d.engine.controls.SaphMouse;
+import com.programm.ge.saphire2d.engine.renderer.SaphRenderer;
+import com.programm.ge.saphire2d.engine.renderer.UIRenderer;
 import com.programm.ge.saphire2d.engine.utils.MathUtils;
+import com.programm.saphire2d.ui.elements.*;
+import com.programm.saphire2d.ui.elements.layout.GridLayout;
+import com.programm.saphire2d.ui.elements.layout.InheritLayout;
+import com.programm.saphire2d.ui.utils.Colors;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -14,22 +21,40 @@ import org.lwjgl.system.MemoryUtil;
 public class SaphEngine {
 
     private final SaphWindow window;
+//    private final SaphMouse mouse;
+//    private final SaphKeyboard keyboard;
+
     private final SaphRenderer renderer;
+    private final UIRenderer uiRenderer;
 
     public SaphEngine(String title, int width, int height){
         init();
         window = createWindow(title, width, height);
 
+//        mouse = new SaphMouse(window.id());
+//        GLFW.glfwSetCursorPosCallback(window.id(), mouse::receiveMousePosInput);
+//        GLFW.glfwSetMouseButtonCallback(window.id(), mouse::receiveMouseButtonInput);
+
+//        keyboard = new SaphKeyboard(window.id());
+//        GLFW.glfwSetKeyCallback(window.id(), keyboard::receiveKeyInput);
+
+
         //Shader shader = ShaderUtils.createShader("/shaders/TestShader1");
-        TestShader1 shader = new TestShader1();
-        shader.start();
-        Matrix4f mat = new Matrix4f();
-        MathUtils.orthoProjection(mat, 0, 0, width, height);
-        shader.loadProjectionMatrix(mat);
-        shader.stop();
+//        TestShader1 shader = new TestShader1();
+//        shader.start();
+//        Matrix4f mat = new Matrix4f();
+//        MathUtils.orthoProjection(mat, 0, 0, width, height);
+//        shader.loadProjectionMatrix(mat);
+//        shader.stop();
+
+        Matrix4f projectionMatrix = new Matrix4f();
+        MathUtils.orthoProjection(projectionMatrix, 0, 0, width, height);
 
 //        GL11.glViewport(0, 0, width, height);
-        renderer = new SaphRenderer(shader);
+        renderer = new SaphRenderer();
+        renderer.init(projectionMatrix);
+        uiRenderer = new UIRenderer(window);
+        uiRenderer.init(projectionMatrix);
     }
 
     public void debugMode(){
@@ -73,9 +98,33 @@ public class SaphEngine {
     }
 
     public void run(SaphObjectHandler handler){
+
+        SUIView view = new SUIView();
+        window.ui = view;
+
+        buildUI(view);
+
+
+
+//        cb.primary(Colors.RED);
+//        cb.secondary(null);
+        IBounds b = new ConstantBounds(100, 100, 300, 300);
+
         while(!window.shouldClose()){
+            view.render(b, uiRenderer);
+
+
+
+//            uiRenderer.drawLine(0, 0, 100, 100, Colors.RED);
+//            uiRenderer.drawLine(10, 10, 100, 110, Colors.RED);
+//            uiRenderer.drawLine(10, 10, 100, 120, Colors.RED);
+//            uiRenderer.drawLine(10, 10, 100, 130, Colors.RED);
+//            uiRenderer.drawLine(10, 10, 100, 140, Colors.RED);
+//            uiRenderer.drawLine(10, 10, 100, 150, Colors.RED);
+
             renderer.prepare();
             renderer.render(handler);
+            uiRenderer.render();
 
             GLFW.glfwSwapBuffers(window.id());
 
@@ -83,7 +132,24 @@ public class SaphEngine {
         }
     }
 
+    private void buildUI(SUIView view){
+//        WaveTabView tabView = new WaveTabView();
+//        view.add(tabView);
+//
+//        tabView.
+
+//        SUIButton btn = new SUIButton("Hello");
+//        btn.listenPressed(() -> System.out.println("Heyyy"));
+//        view.add(btn);
+
+        WaveLabel label = new WaveLabel("My Label");
+        view.add(label);
+
+
+    }
+
     public void cleanup(){
+        uiRenderer.cleanup();
         renderer.cleanup();
         window.cleanup();
         GLFW.glfwTerminate();

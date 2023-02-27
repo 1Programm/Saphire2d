@@ -118,6 +118,13 @@ public class ModelLoader {
 //        return new Texture(textureID);
 //    }
 
+    public static RawModel loadLineModel(int dim, float[] positions){
+        int vaoID = createVAO();
+        storeDataInAttribList(0, dim, positions);
+        unbindVAO();
+        return new RawModel(vaoID, positions.length / 2);
+    }
+
     public static RawModel loadModel(int dim, float[] positions, int[] indices){
         int vaoID = createVAO();
         bindIndicesBuffer(indices);
@@ -133,6 +140,14 @@ public class ModelLoader {
         storeDataInAttribList(1, 2, texCoords);
         unbindVAO();
         return new RawModel(vaoID, indices.length);
+    }
+
+    public static int loadAndReturnIndex(int dim, float[] positions, float[] texCoords){
+        int vaoID = createVAO();
+        storeDataInAttribList(0, dim, positions);
+        storeDataInAttribList(1, 2, texCoords);
+        unbindVAO();
+        return vaoID;
     }
 
     public static void cleanup(){

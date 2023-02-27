@@ -32,6 +32,19 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.programm.ge</groupId>
+            <artifactId>saphire2d-core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.programm.ge</groupId>
+            <artifactId>saphire2d-ui</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+
+        <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl</artifactId>
         </dependency>
