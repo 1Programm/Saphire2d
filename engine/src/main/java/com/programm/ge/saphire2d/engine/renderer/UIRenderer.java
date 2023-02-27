@@ -4,7 +4,7 @@ import com.programm.ge.saphire2d.engine.SaphWindow;
 import com.programm.ge.saphire2d.engine.model.RawModel;
 import com.programm.ge.saphire2d.engine.model.Texture;
 import com.programm.ge.saphire2d.engine.model.font.Character;
-import com.programm.ge.saphire2d.engine.model.font.MyFontMeta;
+import com.programm.ge.saphire2d.engine.model.font.FontMetadata;
 import com.programm.ge.saphire2d.engine.shader.UILineShader;
 import com.programm.ge.saphire2d.engine.shader.UIRectangleShader;
 import com.programm.ge.saphire2d.engine.shader.UITextShader;
@@ -58,7 +58,7 @@ public class UIRenderer implements IPencil {
     private final RawModel rawTextureRectModel;
 
     private final Texture fontTexture;
-    private final MyFontMeta fontMetaFile;
+    private final FontMetadata fontMetaFile;
 
     private final List<LineInfo> lineInfoList = new ArrayList<>();
     private final List<RectInfo> rectInfoList = new ArrayList<>();
@@ -116,7 +116,7 @@ public class UIRenderer implements IPencil {
         );
 
         fontTexture = ModelLoader.loadTexture("/ui/fonts/arial.png", 1);
-        fontMetaFile = MyFontMeta.load("/ui/fonts/arial.fnt", window.aspectRatio());
+        fontMetaFile = FontMetadata.load("/ui/fonts/arial.fnt", window.aspectRatio());
     }
 
     public void init(Matrix4f projectionMatrix){

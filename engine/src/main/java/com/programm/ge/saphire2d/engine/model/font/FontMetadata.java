@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class MyFontMeta {
+public class FontMetadata {
 
     private static final int PAD_TOP = 0;
     private static final int PAD_LEFT = 1;
@@ -22,7 +22,7 @@ public class MyFontMeta {
     private static final String SPLITTER = " ";
     private static final String NUMBER_SEPARATOR = ",";
 
-    public static MyFontMeta load(String path, double aspectRatio) {
+    public static FontMetadata load(String path, double aspectRatio) {
         Map<Integer, Character> metaData = new HashMap<>();
         float spaceWidth = 0;
         int[] padding;
@@ -32,7 +32,7 @@ public class MyFontMeta {
 
 
 
-        InputStream is = MetaFile.class.getResourceAsStream(path);
+        InputStream is = FontMetadata.class.getResourceAsStream(path);
         if(is == null) throw new RuntimeException("Could not read font-meta-file [" + path + "]!");
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -57,7 +57,7 @@ public class MyFontMeta {
         processNextLine(reader, values);
         while (processNextLine(reader, values)) {
             int id = getValueOfVariable(values, "id");
-            if (id == TextMeshCreator.SPACE_ASCII) {
+            if (id == ' ') {
                 spaceWidth = (getValueOfVariable(values, "xadvance") - paddingWidth) / fontSize;
                 continue;
             }
@@ -81,7 +81,7 @@ public class MyFontMeta {
             throw new RuntimeException("ERROR CLOSING READER!", e);
         }
 
-        return new MyFontMeta(metaData, spaceWidth, lineHeight);
+        return new FontMetadata(metaData, spaceWidth, lineHeight);
     }
 
     private static boolean processNextLine(BufferedReader reader, Map<String, String> values) {
