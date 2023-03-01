@@ -3,27 +3,37 @@ package com.programm.saphire2d.ui.elements;
 import com.programm.ge.saphire2d.core.IMouse;
 import com.programm.ge.saphire2d.core.bounds.IBounds;
 import com.programm.saphire2d.ui.IPencil;
-import com.programm.saphire2d.ui.subscription.RunnableSubscriptionManager;
 import com.programm.saphire2d.ui.subscription.Subscription;
+import com.programm.saphire2d.ui.subscription.SubscriptionManager;
 import com.programm.saphire2d.ui.utils.Colors;
 import com.programm.saphire2d.ui.utils.GFXUtils;
 import org.joml.Vector4f;
 
+import java.util.function.Consumer;
+
 public class SUIButtonToggle extends WaveLabel {
 
-    protected final RunnableSubscriptionManager pressedManager = new RunnableSubscriptionManager();
+    protected final SubscriptionManager<Boolean> toggleManager = new SubscriptionManager<>();
 
-    protected Vector4f pressedColor = Colors.LIGHT_GRAY;
+    protected Vector4f pressedColor;
     protected boolean pressed;
 
-    protected Vector4f hoverColor = Colors.LIGHTER_GRAY;
+    protected Vector4f hoverColor;
     protected boolean hovered;
 
     public SUIButtonToggle(String text) {
         super(text);
+        initDefaults();
     }
 
-    public SUIButtonToggle() {}
+    public SUIButtonToggle() {
+        initDefaults();
+    }
+
+    private void initDefaults(){
+        pressedColor = Colors.LIGHT_GRAY;
+        hoverColor = Colors.LIGHTER_GRAY;
+    }
 
     @Override
     public void render(IBounds bounds, IPencil pen) {
@@ -40,16 +50,6 @@ public class SUIButtonToggle extends WaveLabel {
         WaveLabel.renderText(this, bounds, pen);
     }
 
-//    @Override
-//    public void onMousePressed(IBounds bounds, IMouse mouse, int button) {
-//        if(button == IMouse.BUTTON_LEFT) {
-//            if(mouse.inside(bounds)) {
-//                pressed = true;
-//                pressedManager.notifyChange();
-//            }
-//        }
-//    }
-
     @Override
     public void onMouseReleased(IBounds bounds, IMouse mouse, int button) {
         if(button == IMouse.BUTTON_LEFT) {
@@ -57,11 +57,6 @@ public class SUIButtonToggle extends WaveLabel {
                 toggle();
             }
         }
-//        if(button == IMouse.BUTTON_LEFT) {
-//            if(pressed) {
-//                pressed = false;
-//            }
-//        }
     }
 
     @Override
@@ -71,13 +66,13 @@ public class SUIButtonToggle extends WaveLabel {
 
     public void toggle(){
         pressed = !pressed;
-        pressedManager.notifyChange();
+        toggleManager.notifyChange(pressed);
     }
 
     public void toggle(boolean pressed){
         if(this.pressed == pressed) return;
         this.pressed = pressed;
-        pressedManager.notifyChange();
+        toggleManager.notifyChange(pressed);
     }
 
     public void pressedColor(Vector4f pressedColor){
@@ -104,7 +99,7 @@ public class SUIButtonToggle extends WaveLabel {
         return hovered;
     }
 
-    public Subscription listenPressed(Runnable listener){
-        return pressedManager.subscribe(listener);
+    public Subscription listenToggle(Consumer<Boolean> listener){
+        return toggleManager.subscribe(listener);
     }
 }

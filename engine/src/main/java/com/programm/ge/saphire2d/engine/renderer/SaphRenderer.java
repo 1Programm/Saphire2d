@@ -25,12 +25,14 @@ public class SaphRenderer {
         shader.stop();
 
         GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthFunc(GL11.GL_LEQUAL); //Text is same depth so characters might overlay some others
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     public void prepare() {
-        GL11.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+//        GL11.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+        GL11.glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     }
 

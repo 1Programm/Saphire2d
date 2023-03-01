@@ -27,6 +27,7 @@ public class SaphWindow implements IBounds {
         mouse = new SaphMouse(this);
         GLFW.glfwSetCursorPosCallback(windowID, mouse::receiveMousePosInput);
         GLFW.glfwSetMouseButtonCallback(windowID, mouse::receiveMouseButtonInput);
+        GLFW.glfwSetScrollCallback(windowID, mouse::receiveMouseScrollInput);
 
         keyboard = new SaphKeyboard(this);
         GLFW.glfwSetKeyCallback(windowID, keyboard::receiveKeyInput);
@@ -151,6 +152,11 @@ public class SaphWindow implements IBounds {
     public void notifyMouseDragged(int button){
         if(ui == null) return;
         ui.onMouseDragged(this, mouse, button);
+    }
+
+    public void notifyMouseScrolled(float scrollX, float scrollY){
+        if(ui == null) return;
+        ui.onMouseScrolled(this, mouse, scrollX, scrollY);
     }
 
     public void notifyKeyPressed(int key){

@@ -17,36 +17,6 @@ import java.util.function.BiConsumer;
 
 public class SUIView extends SUIComponent {
 
-//    private static class DefaultViewRenderer implements ISUIComponentRenderer<SUIView> {
-//
-//        @Override
-//        public void render(SUIBounds bounds, IPencil pen, SUIView c) {
-//            if (c.secondary != null) {
-//                pen.setColor(c.secondary);
-//                pen.fillRectangle(bounds);
-//            }
-//
-//            if (c.primary != null) {
-//                pen.setColor(GFXUtils.primaryOrDisabled(c));
-//                pen.drawRectangle(bounds);
-//            }
-//        }
-//    }
-
-//    static {
-//        GlobalSUIDefaults.setBaseDefault(SUIView.class, "renderer", new DefaultViewRenderer());
-//        GlobalSUIDefaults.setBaseDefault(SUIView.class, "primary", null);
-//        GlobalSUIDefaults.setBaseDefault(SUIView.class, "secondary", null);
-//        GlobalSUIDefaults.setBaseDefault(SUIView.class, "disabledColor", null);
-//        GlobalSUIDefaults.setBaseDefault(SUIView.class, "layout", new InheritLayout());
-//    }
-
-//    public static SUIView containing(SUIComponent child){
-//        SUIView view = new SUIView(new InheritLayout());
-//        view.add(child);
-//        return view;
-//    }
-
     protected final List<SUIComponent> children = new ArrayList<>();
     protected final List<Object> childArgsList = new ArrayList<>();
     protected final List<IEditableBounds> childBoundsList = new ArrayList<>();
@@ -55,40 +25,18 @@ public class SUIView extends SUIComponent {
     private Float minWidth, minHeight;
 
     public SUIView(ILayout layout) {
+        this();
         this.layout = layout;
     }
 
-    public SUIView() {}
-
-//    @Override
-//    public void init(int windowID){
-//        super.init(windowID);
-//
-//        for(int i=0;i<children.size();i++){
-//            children.get(i).init(windowID);
-//        }
-//    }
+    public SUIView() {
+        primary = null;
+        secondary = null;
+        disabledColor = null;
+    }
 
     @Override
     public void render(IBounds bounds, IPencil pen) {
-//        if(forceRedraw || GlobalComponentUtils.isDirty(this)) {
-//            GlobalComponentUtils.setDirty(this, false);
-//            renderSelf(bounds, pen);
-//            if(layout != null) {
-//                layout.updateBoundsForChildren(pen, bounds, children, childArgsList, childBoundsList);
-//            }
-//            forceRedraw = true;
-//        }
-//        else {
-//            for(int i=0;i<children.size();i++){
-//                if(GlobalComponentUtils.isDirty(children.get(i))){
-//                    renderSelf(bounds, pen);
-//                    forceRedraw = true;
-//                    break;
-//                }
-//            }
-//        }
-
         renderSelf(bounds, pen);
         if(layout != null) {
             layout.updateBoundsForChildren(pen, bounds, children, childArgsList, childBoundsList);
@@ -108,11 +56,7 @@ public class SUIView extends SUIComponent {
         }
     }
 
-//    @SuppressWarnings({"unchecked", "rawtypes"})
     protected void renderSelf(IBounds bounds, IPencil pen){
-//        ISUIComponentRenderer renderer = GlobalWindowRegister.getRendererForComponent(this);
-//        renderer.render(bounds, pen, this);
-
             if (secondary != null) {
                 pen.fillRectangle(bounds, secondary);
             }
@@ -125,7 +69,7 @@ public class SUIView extends SUIComponent {
 
     @Override
     public Float minWidth(IPencil pen) {
-        if(minWidth == null){
+        if(layout != null && minWidth == null){
             minWidth = layout.minWidth(pen, children, childArgsList);
         }
 
@@ -134,7 +78,7 @@ public class SUIView extends SUIComponent {
 
     @Override
     public Float minHeight(IPencil pen) {
-        if(minHeight == null){
+        if(layout != null && minHeight == null){
             minHeight = layout.minHeight(pen, children, childArgsList);
         }
 
@@ -162,6 +106,11 @@ public class SUIView extends SUIComponent {
     }
 
     @Override
+    public void onMouseScrolled(IBounds bounds, IMouse mouse, float scrollX, float scrollY) {
+        callForAll((child, childBounds) -> child.onMouseScrolled(childBounds, mouse, scrollX, scrollY));
+    }
+
+    @Override
     public void onKeyPressed(IBounds bounds, IKeyboard keyboard, int key) {
         callForAll((child, childBounds) -> child.onKeyPressed(childBounds, keyboard, key));
     }
@@ -170,13 +119,6 @@ public class SUIView extends SUIComponent {
     public void onKeyReleased(IBounds bounds, IKeyboard keyboard, int key) {
         callForAll((child, childBounds) -> child.onKeyReleased(childBounds, keyboard, key));
     }
-
-//    @Override
-//    public void onWindowClosed() {
-//        for(int i=0;i<children.size();i++){
-//            children.get(i).onWindowClosed();
-//        }
-//    }
 
     private void callForAll(BiConsumer<SUIComponent, IBounds> childConsumer){
         for(int i=0;i<children.size();i++){
@@ -188,14 +130,11 @@ public class SUIView extends SUIComponent {
     }
 
     public void add(SUIComponent child, Object args){
-//        GlobalWindowRegister.initRegisterID(child, this);
-
         children.add(child);
         childArgsList.add(args);
         childBoundsList.add(new VarBounds(child));
         minWidth = null;
         minHeight = null;
-//        requestRedraw();
     }
 
     public void add(SUIComponent child){
@@ -209,7 +148,6 @@ public class SUIView extends SUIComponent {
                 childBoundsList.remove(i);
                 minWidth = null;
                 minHeight = null;
-//                requestRedraw();
                 return true;
             }
         }
@@ -221,7 +159,6 @@ public class SUIView extends SUIComponent {
         this.layout = layout;
         minWidth = null;
         minHeight = null;
-//        requestRedraw();
     }
     
 }

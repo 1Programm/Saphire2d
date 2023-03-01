@@ -22,7 +22,7 @@ public class WaveTabView extends SUIView {
     protected int selectedTab = -1;
 
     public WaveTabView() {
-        super(new VerticalLayout(VerticalLayout.POLICY_STRETCH_FORCE, VerticalLayout.POLICY_INITIAL));
+        super(new VerticalLayout(VerticalLayout.POLICY_STRETCH_FORCE, VerticalLayout.POLICY_INITIAL, VerticalLayout.ALIGN_LEFT, VerticalLayout.ALIGN_TOP, 0));
 
         tablLabelViewLayout = new HorizontalLayout(HorizontalLayout.POLICY_INITIAL, HorizontalLayout.POLICY_STRETCH_FORCE);
         tabLabelView = new SUIView(tablLabelViewLayout);
@@ -38,17 +38,35 @@ public class WaveTabView extends SUIView {
     }
 
     public void selectTab(int tab){
+        selectTab(tab, true);
+    }
+
+    public void selectTab(int tab, boolean state){
         if(tab < 0 || tab >= tabViews.size()) return;
 
-        if(selectedTab != -1 && selectedTab != tab) {
-            SUIButtonToggle btn = tabButtons.get(selectedTab);
-            btn.toggle(false);
-//            btn.secondary(GlobalWaveDefaults.getDefault(SUIButton.class, "secondary"));
+        if(!state) {
+            if(tab == selectedTab) {
+                SUIButtonToggle btn = tabButtons.get(selectedTab);
+                btn.toggle(true);
+            }
+            return;
+        }
+        else if(tab == selectedTab) {
+            return;
         }
 
-//        tabButtons.get(tab).secondary(GlobalWaveDefaults.getDefault(SUIButton.class, "hoverColor"));
-        tabButtons.get(tab).toggle(true);
+
+        if(selectedTab != -1) {
+            SUIButtonToggle btn = tabButtons.get(selectedTab);
+
+            selectedTab = tab;
+            btn.toggle(false);
+        }
         selectedTab = tab;
+
+
+        tabButtons.get(tab).toggle(true);
+//        selectedTab = tab;
 
         SUIComponent selectedView = tabViews.get(tab);
         if(children.size() == 1){
@@ -73,6 +91,28 @@ public class WaveTabView extends SUIView {
                 child.render(childBounds, pen);
             }
         }
+
+//        SUIComponent child = children.get(0);
+//        IEditableBounds childBounds = childBoundsList.get(0);
+//        if(childBounds != null) {
+//            child.render(childBounds, pen);
+//
+//            if (primary != null) {
+//                float x = childBounds.x();
+//                float y = childBounds.y() + childBounds.height() + 1;
+//                float w = childBounds.width();
+//                Vector4f color = GFXUtils.primaryOrDisabled(this);
+//                pen.drawLine(x, y, x + w, y, color);
+//            }
+//        }
+//
+//        if(children.size() == 2){
+//            child = children.get(1);
+//            childBounds = childBoundsList.get(1);
+//            if(childBounds != null) {
+//                child.render(childBounds, pen);
+//            }
+//        }
     }
 
     @Override
@@ -81,14 +121,13 @@ public class WaveTabView extends SUIView {
 
         SUIButtonToggle button = new SUIButtonToggle(name);
         final int index = tabButtons.size();
-        button.listenPressed(() -> selectTab(index));
-        button.size(120, 0);
+        button.listenToggle((t) -> selectTab(index, t));
+        button.size(100, 0);
 
         tabButtons.add(button);
         tabLabelView.add(button);
         tabViews.add(child);
 
-//        if(selectedTab == -1) selectedTab = 0;
         if(selectedTab == -1) selectTab(0);
     }
 

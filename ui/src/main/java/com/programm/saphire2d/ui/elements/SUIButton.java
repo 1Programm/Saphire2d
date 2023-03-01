@@ -13,17 +13,25 @@ public class SUIButton extends WaveLabel {
 
     protected final RunnableSubscriptionManager pressedManager = new RunnableSubscriptionManager();
 
-    protected Vector4f pressedColor = Colors.LIGHT_GRAY;
+    protected Vector4f pressedColor;
     protected boolean pressed;
 
-    protected Vector4f hoverColor = Colors.LIGHTER_GRAY;
+    protected Vector4f hoverColor;
     protected boolean hovered;
 
     public SUIButton(String text) {
         super(text);
+        initDefaults();
     }
 
-    public SUIButton() {}
+    public SUIButton() {
+        initDefaults();
+    }
+
+    private void initDefaults(){
+        pressedColor = Colors.LIGHT_GRAY;
+        hoverColor = Colors.LIGHTER_GRAY;
+    }
 
     @Override
     public void render(IBounds bounds, IPencil pen) {

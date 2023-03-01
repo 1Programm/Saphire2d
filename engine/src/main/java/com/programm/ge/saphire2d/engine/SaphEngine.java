@@ -6,6 +6,9 @@ import com.programm.ge.saphire2d.engine.renderer.SaphRenderer;
 import com.programm.ge.saphire2d.engine.renderer.UIRenderer;
 import com.programm.ge.saphire2d.engine.utils.MathUtils;
 import com.programm.saphire2d.ui.elements.*;
+import com.programm.saphire2d.ui.elements.layout.GridLayout;
+import com.programm.saphire2d.ui.elements.layout.InheritLayout;
+import com.programm.saphire2d.ui.elements.layout.VerticalLayout;
 import com.programm.saphire2d.ui.utils.Colors;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
@@ -76,6 +79,8 @@ public class SaphEngine {
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 1);
         //---
 
+
+
         long windowId = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
         if (windowId == MemoryUtil.NULL) throw new RuntimeException("Failed to create the GLFW window");
 
@@ -96,32 +101,69 @@ public class SaphEngine {
 
     public void run(SaphObjectHandler handler){
 
-        SUIView view = new SUIView();
+//        SUIView view = new SUIView();
+        SUIView view = new SUIView(new InheritLayout());
+        view.primary(Colors.BLACK);
         window.ui = view;
 
-        buildUI(view);
+//        SUIButton btn = new SUIButton("Hellooo There");
+//        btn.bounds(-50,0, 100, 20);
+//        view.add(btn);
+
+
+//        SUIScrollView sv = new SUIScrollView();
+//        sv.setLayout(new VerticalLayout());
+//        sv.secondary(Colors.RED);
+//
+//        SUIButton b1 = new SUIButton("Hey");
+//        b1.listenPressed(() -> System.out.println("jojoo"));
+//        sv.add(b1);
+//        sv.add(new SUIButton("Cool"));
+//        sv.add(new SUIButton("Buttons"));
+//
+//
+//        view.add(sv);
+
+        SUICombobox2<String> cb1 = new SUICombobox2<>();
+        cb1.bounds(0, 0, 100, 30);
+        cb1.scrollTrigger(100);
+
+        cb1.addItem("Hey");
+        cb1.addItem("Ich");
+        cb1.addItem("Du");
+        cb1.addItem("Er");
+        cb1.addItem("Sie");
+        cb1.addItem("Es");
+        cb1.addItem("Wir");
+        view.add(cb1);
+
+        SUICombobox<String> cb2 = new SUICombobox<>();
+        cb2.bounds(110, 0, 100, 30);
+
+        cb2.addItem("Hey");
+        cb2.addItem("Ich");
+        cb2.addItem("Du");
+        cb2.addItem("Er");
+        cb2.addItem("Sie");
+        cb2.addItem("Es");
+        cb2.addItem("Wir");
+        view.add(cb2);
+
+//        buildUI(view);
 
 
 
-//        cb.primary(Colors.RED);
-//        cb.secondary(null);
-        IBounds b = new ConstantBounds(100, 100, 300, 300);
+        IBounds b = new ConstantBounds(100, 50, 300, 300);
+
+
 
         while(!window.shouldClose()){
             view.render(b, uiRenderer);
 
-//            System.out.println("StrWidth: " + uiRenderer.stringWidth("Hello World!", 77));
-//            uiRenderer.fillRectangle(100, 100, 428, 77, Colors.LIGHT_GRAY);
-//            uiRenderer.drawString("Hello World!", 100, 100, Colors.BLACK, 77);
+//            uiRenderer.setClipping(20, 20, window.width() - 40, 50);
+//            uiRenderer.fillRectangle(10, 10, window.width() - 20, window.height() - 20, Colors.RED);
 
 
-
-//            uiRenderer.drawLine(0, 0, 100, 100, Colors.RED);
-//            uiRenderer.drawLine(10, 10, 100, 110, Colors.RED);
-//            uiRenderer.drawLine(10, 10, 100, 120, Colors.RED);
-//            uiRenderer.drawLine(10, 10, 100, 130, Colors.RED);
-//            uiRenderer.drawLine(10, 10, 100, 140, Colors.RED);
-//            uiRenderer.drawLine(10, 10, 100, 150, Colors.RED);
 
             renderer.prepare();
             renderer.render(handler);
@@ -134,14 +176,23 @@ public class SaphEngine {
     }
 
     private void buildUI(SUIView view){
-//        WaveTabView tabView = new WaveTabView();
-//        view.add(tabView);
-//
-//        tabView.
+        WaveTabView tabView = new WaveTabView();
+        tabView.primary(Colors.BLACK);
+        view.add(tabView);
 
-        SUIButton btn = new SUIButton("Hello");
-        btn.listenPressed(() -> System.out.println("Heyyy"));
-        view.add(btn);
+        SUIView v1 = new SUIView(new GridLayout(3, 3));
+        v1.secondary(Colors.WHITE);
+        v1.add(new SUIButton("My Button 1"), 4);
+        tabView.add(v1, "Tab 1");
+
+        SUIView v2 = new SUIView(new GridLayout(3, 3));
+        v2.secondary(Colors.WHITE);
+        v2.add(new SUIButton("My Button 2"), 0);
+        tabView.add(v2, "Cooler Tab 2");
+
+//        SUIButton btn = new SUIButton("Hello");
+//        btn.listenPressed(() -> System.out.println("Heyyy"));
+//        view.add(btn);
 
 //        WaveLabel label = new WaveLabel("My Label");
 //        label.fontSize(50);

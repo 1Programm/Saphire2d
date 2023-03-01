@@ -30,6 +30,8 @@ public abstract class SUIComponent implements IComponent, IEditableBounds, SUIRe
     @Override
     public void onMouseDragged(IBounds bounds, IMouse mouse, int button) {}
     @Override
+    public void onMouseScrolled(IBounds bounds, IMouse mouse, float scrollX, float scrollY) {}
+    @Override
     public void onKeyPressed(IBounds bounds, IKeyboard keyboard, int key) {}
     @Override
     public void onKeyReleased(IBounds bounds, IKeyboard keyboard, int key) {}

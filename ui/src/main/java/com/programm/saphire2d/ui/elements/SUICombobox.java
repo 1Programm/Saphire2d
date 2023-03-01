@@ -11,16 +11,17 @@ import com.programm.saphire2d.ui.utils.Colors;
 import com.programm.saphire2d.ui.utils.GFXUtils;
 import org.joml.Vector4f;
 
-import java.awt.event.MouseEvent;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class WaveCombobox<T> extends AbstractTextComponent {
+public class SUICombobox<T> extends AbstractTextComponent {
 
     private static class DefaultItemRenderer extends WaveLabel {
         {
-            primary = Colors.BLACK;
+//            primary = Colors.BLACK;
+            secondary = null;
         }
     }
 
@@ -42,7 +43,7 @@ public class WaveCombobox<T> extends AbstractTextComponent {
     protected ITextComponent itemRenderer;
     protected boolean itemsExpanded;
 
-    public WaveCombobox(List<T> items, int selectedIndex) {
+    public SUICombobox(List<T> items, int selectedIndex) {
         this.items = items;
         this.itemRenderBounds = initRenderBounds(items.size());
         this.selectedIndex = selectedIndex;
@@ -51,15 +52,15 @@ public class WaveCombobox<T> extends AbstractTextComponent {
         itemRenderer = new DefaultItemRenderer();
     }
 
-    public WaveCombobox(T[] items, int selectedIndex) {
+    public SUICombobox(T[] items, int selectedIndex) {
         this(new ArrayList<>(List.of(items)), selectedIndex);
     }
 
-    public WaveCombobox(T[] items) {
+    public SUICombobox(T[] items) {
         this(items, -1);
     }
 
-    public WaveCombobox() {
+    public SUICombobox() {
         this(new ArrayList<>(), -1);
     }
 
@@ -77,10 +78,25 @@ public class WaveCombobox<T> extends AbstractTextComponent {
         WaveLabel.renderText(this, bounds, pen);
 
         if(itemsExpanded){
-            float curY = bounds.y() + bounds.height();
+//            float curY = bounds.y() + bounds.height();
             float itemHeight = minHeight(pen);
             float itemX = bounds.x();
             float itemWidth = bounds.width();
+            float allItemsHeight = itemHeight * (items.size() - 1) + bounds.height();
+
+            float startY = bounds.y();
+            if(selectedIndex != -1){
+                startY -= itemHeight * selectedIndex;
+            }
+            else {
+                startY += bounds.height();
+            }
+
+            float curY = startY;
+
+            if(secondary != null) {
+                pen.fillRectangle(itemX, startY, itemWidth, allItemsHeight, secondary);
+            }
 
             for(int i=0;i<items.size();i++){
                 Object item = items.get(i);
@@ -88,6 +104,11 @@ public class WaveCombobox<T> extends AbstractTextComponent {
                 IEditableBounds renderBounds = itemRenderBounds.get(i);
 
                 renderBounds.bounds(itemX, curY, itemWidth, itemHeight);
+
+                if(hoveredIndex == i) {
+//                    pen.setColor(Color.LIGHT_GRAY);
+                    pen.fillRectangle(renderBounds, Colors.LIGHT_GRAY);
+                }
 
                 itemRenderer.text(_item);
                 itemRenderer.render(renderBounds, pen);
@@ -106,12 +127,6 @@ public class WaveCombobox<T> extends AbstractTextComponent {
 
         return renderBounds;
     }
-
-//    @Override
-//    public void init(int windowID) {
-//        super.init(windowID);
-//        if(this.itemRenderer != null) GlobalWindowRegister.initRegisterID(itemRenderer, this);
-//    }
 
     @Override
     public Float minWidth(IPencil pen) {
@@ -158,7 +173,7 @@ public class WaveCombobox<T> extends AbstractTextComponent {
             }
         }
 
-        if(button == MouseEvent.BUTTON1) {
+        if(button == IMouse.BUTTON_LEFT) {
             if(itemsExpanded){
                 itemsExpanded = false;
                 hoveredIndex = -1;

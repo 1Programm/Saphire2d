@@ -1,10 +1,13 @@
 package com.programm.ge.saphire2d.engine.renderer;
 
+import com.programm.ge.saphire2d.core.bounds.ConstantBounds;
+import com.programm.ge.saphire2d.core.bounds.IBounds;
 import com.programm.ge.saphire2d.engine.SaphWindow;
 import com.programm.ge.saphire2d.engine.model.RawModel;
 import com.programm.ge.saphire2d.engine.model.Texture;
 import com.programm.ge.saphire2d.engine.model.font.Character;
 import com.programm.ge.saphire2d.engine.model.font.FontMetadata;
+import com.programm.ge.saphire2d.engine.shader.TestShader2;
 import com.programm.ge.saphire2d.engine.shader.UILineShader;
 import com.programm.ge.saphire2d.engine.shader.UIRectangleShader;
 import com.programm.ge.saphire2d.engine.shader.UITextShader;
@@ -13,17 +16,21 @@ import com.programm.saphire2d.ui.IPencil;
 import lombok.RequiredArgsConstructor;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class UIRenderer implements IPencil {
 
     private static final float DEPTH_INCREASE = 0.0001f;
+
 
     @RequiredArgsConstructor
     private static class LineInfo {
@@ -31,6 +38,7 @@ public class UIRenderer implements IPencil {
         final float depth;
         final float lineSize;
         final Vector4f color;
+        final IBounds clipSpace;
     }
 
     @RequiredArgsConstructor
@@ -39,6 +47,7 @@ public class UIRenderer implements IPencil {
         final float depth;
         final Vector4f color;
         final float edge;
+        final IBounds clipSpace;
     }
 
     @RequiredArgsConstructor
@@ -48,6 +57,7 @@ public class UIRenderer implements IPencil {
         final Vector4f color;
         final String text;
         final float fontSize;
+        final IBounds clipSpace;
     }
 
     private static final Matrix4f TRANSFORM_MATRIX = new Matrix4f();
@@ -59,6 +69,7 @@ public class UIRenderer implements IPencil {
 
     private final Texture fontTexture;
     private final FontMetadata fontMetaFile;
+    private final Texture testTexture;
 
     private final List<LineInfo> lineInfoList = new ArrayList<>();
     private final List<RectInfo> rectInfoList = new ArrayList<>();
@@ -67,8 +78,10 @@ public class UIRenderer implements IPencil {
     private final UIRectangleShader rectShader = new UIRectangleShader();
     private final UILineShader lineShader = new UILineShader();
     private final UITextShader textShader = new UITextShader();
+    private final TestShader2 testShader = new TestShader2();
 
     private float curDepth;
+    private final Stack<IBounds> clippingStack = new Stack<>();
 
 
     public UIRenderer(SaphWindow window) {
@@ -104,10 +117,10 @@ public class UIRenderer implements IPencil {
                          0.5f,  0.5f, //3
                 },
                 new float[]{
-                        0.0f, 0.0f,
-                        0.0f, 1.0f,
-                        1.0f, 1.0f,
-                        1.0f, 0.0f,
+                        0.0f, 0.0f, //Unten Links
+                        0.0f, 1.0f, //Oben Links
+                        1.0f, 1.0f, //Oben Rechts
+                        1.0f, 0.0f, //Unten Rechts
                 },
                 new int[]{
                         0,1,3,
@@ -117,6 +130,7 @@ public class UIRenderer implements IPencil {
 
         fontTexture = ModelLoader.loadTexture("/ui/fonts/arial.png", 1);
         fontMetaFile = FontMetadata.load("/ui/fonts/arial.fnt", window.aspectRatio());
+        testTexture = ModelLoader.loadTexture("/ui/fonts/Test.png", 1);
     }
 
     public void init(Matrix4f projectionMatrix){
@@ -129,6 +143,12 @@ public class UIRenderer implements IPencil {
         textShader.start();
         textShader.loadProjectionMatrix(projectionMatrix);
         textShader.stop();
+        testShader.start();
+        testShader.loadProjectionMatrix(projectionMatrix);
+        testShader.stop();
+
+
+        //GL11.glScissor(0, 0, (int)(window.width() * 2), (int) (window.height() * 2));
     }
 
 
@@ -161,28 +181,38 @@ public class UIRenderer implements IPencil {
     }
 
     @Override
+    public void pushClipping(float x, float y, float w, float h) {
+        clippingStack.push(new ConstantBounds(x, y, w, h));
+    }
+
+    @Override
+    public void popClipping() {
+        clippingStack.pop();
+    }
+
+    @Override
     public void drawLine(float x1, float y1, float x2, float y2, Vector4f color, float lineSize) {
-        lineInfoList.add(new LineInfo(x1, y1, x2, y2, getIncreaseDepth(), lineSize, color));
+        lineInfoList.add(new LineInfo(x1, y1, x2, y2, getIncreaseDepth(), lineSize, color, getCurClipSpace()));
     }
 
     @Override
     public void drawRectangle(float x, float y, float width, float height, Vector4f color, float edge, float lineSize) {
         float depth = getIncreaseDepth();
 
-        lineInfoList.add(new LineInfo(x, y, x + width, y, depth, lineSize, color));
-        lineInfoList.add(new LineInfo(x + width, y, x + width, y + height, depth, lineSize, color));
-        lineInfoList.add(new LineInfo(x, y + height, x + width, y + height, depth, lineSize, color));
-        lineInfoList.add(new LineInfo(x, y, x, y + height, depth, lineSize, color));
+        lineInfoList.add(new LineInfo(x, y, x + width, y, depth, lineSize, color, getCurClipSpace()));
+        lineInfoList.add(new LineInfo(x + width, y, x + width, y + height, depth, lineSize, color, getCurClipSpace()));
+        lineInfoList.add(new LineInfo(x, y + height, x + width, y + height, depth, lineSize, color, getCurClipSpace()));
+        lineInfoList.add(new LineInfo(x, y, x, y + height, depth, lineSize, color, getCurClipSpace()));
     }
 
     @Override
     public void fillRectangle(float x, float y, float width, float height, Vector4f color, float edge) {
-        rectInfoList.add(new RectInfo(x, y, width, height, getIncreaseDepth(), color, edge));
+        rectInfoList.add(new RectInfo(x, y, width, height, getIncreaseDepth(), color, edge, getCurClipSpace()));
     }
 
     @Override
     public void drawString(String s, float x, float y, Vector4f color, float fontSize) {
-        textInfoList.add(new TextInfo(x, y, getIncreaseDepth(), color, s, fontSize));
+        textInfoList.add(new TextInfo(x, y, getIncreaseDepth(), color, s, fontSize, getCurClipSpace()));
     }
 
     @Override
@@ -191,13 +221,13 @@ public class UIRenderer implements IPencil {
         float strHeight = stringHeight(fontSize);
 
 //        drawRectangle(x - strWidth/2f, y + strHeight/2.5f, strWidth, strHeight, Colors.RED);
-        drawString(s, x - strWidth/2f, y + strHeight/2.5f, color, fontSize);
+        drawString(s, x - strWidth/2f, y - strHeight/2.5f, color, fontSize);
     }
 
     @Override
     public void drawStringVCentered(String s, float x, float y, Vector4f color, float fontSize) {
         float strHeight = stringHeight(fontSize);
-        drawString(s, x, y + strHeight/2.5f, color, fontSize);
+        drawString(s, x, y - strHeight/2.5f, color, fontSize);
     }
 
     @Override
@@ -205,7 +235,7 @@ public class UIRenderer implements IPencil {
         float strWidth = stringWidth(s, fontSize);
         float strHeight = stringHeight(fontSize);
 
-        drawString(s, x + width - strWidth, y + strHeight/2.5f, color, fontSize);
+        drawString(s, x + width - strWidth, y - strHeight/2.5f, color, fontSize);
     }
 
     @Override
@@ -224,14 +254,62 @@ public class UIRenderer implements IPencil {
         return depth;
     }
 
+    private IBounds getCurClipSpace(){
+        return clippingStack.isEmpty() ? null : clippingStack.peek();
+    }
+
+    private void activateClipSpace(IBounds bounds){
+        int x = (int)(bounds.x() * 2f);
+        int y = (int)((window.height() - (bounds.y() + bounds.height())) * 2f);
+        int w = (int)(bounds.width() * 2f);
+        int h = (int)(bounds.height() * 2f);
+        GL11.glScissor(x, y, w, h);
+//        GL11.glScissor((int)bounds.x(), (int)(window.height() * 2 - (bounds.y() + bounds.height())), (int)bounds.width(), (int)bounds.height());
+    }
+
+
     public void render(){
 //        System.out.println("Redering [" + lineInfoList.size() + "] Lines and [" + rectInfoList.size() + "] Rectangles, Depth: [" + curDepth + "]!");
+
+//        testShader.start();
+//        GL30.glBindVertexArray(rawTextureRectModel.vaoID);
+//        GL20.glEnableVertexAttribArray(0);
+//        GL20.glEnableVertexAttribArray(1);
+//
+//        GL13.glActiveTexture(GL13.GL_TEXTURE0);
+//        GL13.glBindTexture(GL11.GL_TEXTURE_2D, testTexture.textureID);
+//
+//        getUITransformation(TRANSFORM_MATRIX, 20, 20, 0, 300, 300);
+//        testShader.loadTransformationMatrix(TRANSFORM_MATRIX);
+//        GL11.glDrawElements(GL11.GL_TRIANGLES, rawTextureRectModel.vertexCount, GL11.GL_UNSIGNED_INT, 0);
+//
+//        GL20.glDisableVertexAttribArray(0);
+//        GL20.glDisableVertexAttribArray(1);
+//        GL30.glBindVertexArray(0);
+//        testShader.stop();
+
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         lineShader.start();
         GL30.glBindVertexArray(rawLineModel.vaoID);
         GL20.glEnableVertexAttribArray(0);
 
         for(LineInfo info : lineInfoList) {
+            if(info.clipSpace != null) activateClipSpace(info.clipSpace);
+
             getUILineTransformation(TRANSFORM_MATRIX, info.x1, info.y1, info.x2, info.y2, info.depth, info.lineSize);
             lineShader.loadTransformationMatrix(TRANSFORM_MATRIX);
             lineShader.loadColor(info.color);
@@ -252,6 +330,8 @@ public class UIRenderer implements IPencil {
         GL20.glEnableVertexAttribArray(0);
 
         for(RectInfo info : rectInfoList) {
+            if(info.clipSpace != null) activateClipSpace(info.clipSpace);
+
             getUITransformation(TRANSFORM_MATRIX, info.x, info.y, info.depth, info.w, info.h);
             rectShader.loadTransformationMatrix(TRANSFORM_MATRIX);
             rectShader.loadColor(info.color);
@@ -275,6 +355,7 @@ public class UIRenderer implements IPencil {
         GL13.glBindTexture(GL11.GL_TEXTURE_2D, fontTexture.textureID);
 
         for(TextInfo info : textInfoList) {
+            if(info.clipSpace != null) activateClipSpace(info.clipSpace);
 
             textShader.loadColor(info.color);
 
@@ -298,15 +379,6 @@ public class UIRenderer implements IPencil {
 
                 curX += c.xAdvance * info.fontSize;
             }
-
-//            getUITransformation(TRANSFORM_MATRIX, curX, info.y, info.depth, 20, 20);
-//            textShader.loadTransformationMatrix(TRANSFORM_MATRIX);
-////            textShader.loadTextureOffsetAndScale(133 / 512f, 398 / 512f, 44 / 512f, 50 / 512f);
-//            char firstChar = info.text.charAt(0);
-//            Character c = fontMetaFile.getCharacter(firstChar);
-//            textShader.loadTextureOffsetAndScale((float)c.texCoordX, (float)c.texCoordY, (float)c.texCoordMaxX, (float)c.texCoordMaxY);
-//
-//            GL11.glDrawElements(GL11.GL_TRIANGLES, rawTextureRectModel.vertexCount, GL11.GL_UNSIGNED_INT, 0);
         }
 
         GL20.glDisableVertexAttribArray(0);
@@ -320,6 +392,10 @@ public class UIRenderer implements IPencil {
         lineInfoList.clear();
         rectInfoList.clear();
         textInfoList.clear();
+
+
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        clippingStack.clear();
     }
 
     private void getUITransformation(Matrix4f mat, float x, float y, float z, float w, float h){

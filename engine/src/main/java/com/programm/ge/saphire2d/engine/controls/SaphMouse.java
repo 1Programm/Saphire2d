@@ -37,6 +37,10 @@ public class SaphMouse implements IMouse {
         }
     }
 
+    public void receiveMouseScrollInput(long windowID, double xoffset, double yoffset){
+        window.notifyMouseScrolled((float)xoffset, (float)yoffset);
+    }
+
     @Override
     public float x() {
         return x;

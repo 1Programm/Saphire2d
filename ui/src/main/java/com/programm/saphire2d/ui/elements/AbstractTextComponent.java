@@ -9,17 +9,22 @@ import org.joml.Vector4f;
 public abstract class AbstractTextComponent extends SUIComponent implements ITextComponent {
 
     protected String text;
-    protected Vector4f textColor = Colors.BLACK;
-    protected int textAlign = ILayout.ALIGN_CENTER;
-    private float fontSize = 21;
+    protected Vector4f textColor;
+    protected int textAlign;
+    private float fontSize;
 
     protected Float minWidth, minHeight;
 
     public AbstractTextComponent(String text) {
+        this();
         this.text = text;
     }
 
-    public AbstractTextComponent() {}
+    public AbstractTextComponent() {
+        textColor = Colors.BLACK;
+        textAlign = ILayout.ALIGN_CENTER;
+        fontSize = 21;
+    }
 
     @Override
     public Float minWidth(IPencil pen) {

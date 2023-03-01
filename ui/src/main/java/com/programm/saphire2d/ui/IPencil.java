@@ -11,6 +11,15 @@ public interface IPencil {
 
 
 
+    void pushClipping(float x, float y, float w, float h);
+
+    default void pushClipping(IBounds bounds){
+        pushClipping(bounds.x(), bounds.y(), bounds.width(), bounds.height());
+    }
+
+    void popClipping();
+
+
 
 
     void drawLine(float x1, float y1, float x2, float y2, Vector4f color, float lineSize);
