@@ -13,6 +13,7 @@
         <module>engine</module>
         <module>ui</module>
         <module>core</module>
+        <module>reactive-values</module>
     </modules>
 
     <properties>
