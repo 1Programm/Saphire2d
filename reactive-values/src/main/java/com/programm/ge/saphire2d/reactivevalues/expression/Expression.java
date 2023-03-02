@@ -13,7 +13,8 @@ public abstract class Expression<T> extends AbstractObservableValue<T> implement
 
         ChangeListener myListener = this::notifyChange;
         for(ObservableValue<?> val : values){
-            val.addWeakListener(myListener);
+//            val.addWeakListener(myListener);
+            val.addListener(myListener);
         }
     }
 

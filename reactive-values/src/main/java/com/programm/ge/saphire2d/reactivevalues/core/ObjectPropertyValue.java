@@ -4,20 +4,21 @@ public final class ObjectPropertyValue<T> extends ObjectProperty<T> {
 
     private T myValue;
 
-    public ObjectPropertyValue(T value)
-    {
+    public ObjectPropertyValue(){
+        myValue = null;
+    }
+
+    public ObjectPropertyValue(T value) {
         myValue = value;
     }
 
     @Override
-    protected void setDirectly(T value)
-    {
+    protected void setDirectly(T value) {
         myValue = value;
     }
 
     @Override
-    public T get()
-    {
+    public T get() {
         return myValue;
     }
 }
