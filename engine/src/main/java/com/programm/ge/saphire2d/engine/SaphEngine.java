@@ -5,11 +5,11 @@ import com.programm.ge.saphire2d.core.bounds.IBounds;
 import com.programm.ge.saphire2d.engine.renderer.SaphRenderer;
 import com.programm.ge.saphire2d.engine.renderer.UIRenderer;
 import com.programm.ge.saphire2d.engine.utils.MathUtils;
-import com.programm.saphire2d.ui.elements.*;
-import com.programm.saphire2d.ui.elements.layout.GridLayout;
-import com.programm.saphire2d.ui.elements.layout.InheritLayout;
-import com.programm.saphire2d.ui.elements.layout.VerticalLayout;
-import com.programm.saphire2d.ui.utils.Colors;
+import com.programm.ge.saphire2d.reactivevalues.core.*;
+import com.programm.ge.saphire2d.reactivevalues.expression.string.FormatExpression;
+import com.programm.ge.saphire2d.ui.elements.*;
+import com.programm.ge.saphire2d.ui.elements.layout.GridLayout;
+import com.programm.ge.saphire2d.ui.utils.Colors;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -22,8 +22,6 @@ public class SaphEngine {
     private static final Matrix4f PROJECTION_MATRIX = new Matrix4f();
 
     private final SaphWindow window;
-//    private final SaphMouse mouse;
-//    private final SaphKeyboard keyboard;
 
     private final SaphRenderer renderer;
     private final UIRenderer uiRenderer;
@@ -58,7 +56,6 @@ public class SaphEngine {
     }
 
     public void debugMode(){
-//        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
     }
 
@@ -100,68 +97,19 @@ public class SaphEngine {
     }
 
     public void run(SaphObjectHandler handler){
-
-//        SUIView view = new SUIView();
-        SUIView view = new SUIView(new InheritLayout());
+        SUIView view = new SUIView();
         view.primary(Colors.BLACK);
         window.ui = view;
 
-//        SUIButton btn = new SUIButton("Hellooo There");
-//        btn.bounds(-50,0, 100, 20);
-//        view.add(btn);
-
-
-//        SUIScrollView sv = new SUIScrollView();
-//        sv.setLayout(new VerticalLayout());
-//        sv.secondary(Colors.RED);
-//
-//        SUIButton b1 = new SUIButton("Hey");
-//        b1.listenPressed(() -> System.out.println("jojoo"));
-//        sv.add(b1);
-//        sv.add(new SUIButton("Cool"));
-//        sv.add(new SUIButton("Buttons"));
-//
-//
-//        view.add(sv);
-
-        SUICombobox2<String> cb1 = new SUICombobox2<>();
-        cb1.bounds(0, 0, 100, 30);
-        cb1.scrollTrigger(100);
-
-        cb1.addItem("Hey");
-        cb1.addItem("Ich");
-        cb1.addItem("Du");
-        cb1.addItem("Er");
-        cb1.addItem("Sie");
-        cb1.addItem("Es");
-        cb1.addItem("Wir");
-        view.add(cb1);
-
-        SUICombobox<String> cb2 = new SUICombobox<>();
-        cb2.bounds(110, 0, 100, 30);
-
-        cb2.addItem("Hey");
-        cb2.addItem("Ich");
-        cb2.addItem("Du");
-        cb2.addItem("Er");
-        cb2.addItem("Sie");
-        cb2.addItem("Es");
-        cb2.addItem("Wir");
-        view.add(cb2);
-
-//        buildUI(view);
+        buildUI(view);
 
 
 
         IBounds b = new ConstantBounds(100, 50, 300, 300);
 
 
-
         while(!window.shouldClose()){
             view.render(b, uiRenderer);
-
-//            uiRenderer.setClipping(20, 20, window.width() - 40, 50);
-//            uiRenderer.fillRectangle(10, 10, window.width() - 20, window.height() - 20, Colors.RED);
 
 
 
@@ -175,20 +123,41 @@ public class SaphEngine {
         }
     }
 
+    private BoolObservable eq2;
+
     private void buildUI(SUIView view){
-        WaveTabView tabView = new WaveTabView();
+        SUITabView tabView = new SUITabView();
         tabView.primary(Colors.BLACK);
         view.add(tabView);
 
         SUIView v1 = new SUIView(new GridLayout(3, 3));
         v1.secondary(Colors.WHITE);
-        v1.add(new SUIButton("My Button 1"), 4);
-        tabView.add(v1, "Tab 1");
+
+        SUIButton btn1 = new SUIButton("Count up!");
+        v1.add(btn1);
+
+        SUILabel label1 = new SUILabel("Count: 0");
+        label1.text().bind(new FormatExpression("Count: %s", btn1.pressed().onlyTrue().countChange()));
+        v1.add(label1);
+
+
+
+
+
+        tabView.add(v1, "Tab 1----------");
 
         SUIView v2 = new SUIView(new GridLayout(3, 3));
         v2.secondary(Colors.WHITE);
         v2.add(new SUIButton("My Button 2"), 0);
         tabView.add(v2, "Cooler Tab 2");
+
+
+        SUICombobox<String> myCombo = new SUICombobox<>();
+        myCombo.selectionMaxHeight().set(80f);
+        for(int i=1;i<=10;i++){
+            myCombo.addItem("" + i);
+        }
+        v2.add(myCombo, 4);
 
 //        SUIButton btn = new SUIButton("Hello");
 //        btn.listenPressed(() -> System.out.println("Heyyy"));

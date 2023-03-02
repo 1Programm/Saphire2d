@@ -1,11 +1,24 @@
 package com.programm.ge.saphire2d.reactivevalues;
 
-public interface Observable {
+import com.programm.ge.saphire2d.reactivevalues.core.IntObservable;
+import com.programm.ge.saphire2d.reactivevalues.core.IntPropertyValue;
 
-    void addListener(ChangeListener listener);
+public interface Observable<T> {
 
-    void removeListener(ChangeListener listener);
+    void listenChange(ChangeListener<T> listener);
 
-    void addWeakListener(ChangeListener listener);
+    void listen(NotifyListener listener);
+
+
+    void removeListener(ChangeListener<T> listener);
+
+//    void addWeakListener(ChangeListener<T> listener);
+
+
+    default IntObservable countChange(){
+        IntPropertyValue counter = new IntPropertyValue();
+        listen(counter::increment);
+        return counter;
+    }
 
 }

@@ -1,10 +1,10 @@
 package com.programm.ge.saphire2d.reactivevalues.core;
 
-import com.programm.ge.saphire2d.reactivevalues.ChangeListener;
+import com.programm.ge.saphire2d.reactivevalues.EmptyObservable;
 import com.programm.ge.saphire2d.reactivevalues.ObservableValue;
 import com.programm.ge.saphire2d.reactivevalues.expression.number.FloatComparisonExpression;
 
-public class FloatConst implements FloatObservable {
+public class FloatConst implements FloatObservable, EmptyObservable<Float> {
 
     private final float value;
 
@@ -17,24 +17,6 @@ public class FloatConst implements FloatObservable {
     public Float get()
     {
         return value;
-    }
-
-    @Override
-    public void addListener(ChangeListener listener)
-    {
-
-    }
-
-    @Override
-    public void removeListener(ChangeListener listener)
-    {
-
-    }
-
-    @Override
-    public void addWeakListener(ChangeListener listener)
-    {
-
     }
 
     @Override

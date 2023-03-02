@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractProperty <T> extends AbstractObservableValue<T> implements SettableValue<T> {
+public abstract class AbstractProperty <T> extends AbstractObservable<T> implements SettableValue<T> {
 
     public static List<AbstractProperty<?>> GetAll(Object object){
         List<AbstractProperty<?>> properties = new ArrayList<>();
@@ -54,7 +54,7 @@ public abstract class AbstractProperty <T> extends AbstractObservableValue<T> im
             setNotificationsEnabled(false);
             setDirectly(value);
             setNotificationsEnabled(true);
-            notifyChange();
+            notifyChange(value);
         }
     }
 

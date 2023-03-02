@@ -12,17 +12,15 @@ import com.programm.ge.saphire2d.engine.shader.UILineShader;
 import com.programm.ge.saphire2d.engine.shader.UIRectangleShader;
 import com.programm.ge.saphire2d.engine.shader.UITextShader;
 import com.programm.ge.saphire2d.engine.utils.ModelLoader;
-import com.programm.saphire2d.ui.IPencil;
+import com.programm.ge.saphire2d.ui.IPencil;
 import lombok.RequiredArgsConstructor;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -82,6 +80,7 @@ public class UIRenderer implements IPencil {
 
     private float curDepth;
     private final Stack<IBounds> clippingStack = new Stack<>();
+    private boolean clipCurrentlyActive;
 
 
     public UIRenderer(SaphWindow window) {
@@ -259,17 +258,34 @@ public class UIRenderer implements IPencil {
     }
 
     private void activateClipSpace(IBounds bounds){
+//        if(bounds == null) return;
+        if(bounds == null){
+            if(clipCurrentlyActive){
+                clipCurrentlyActive = false;
+
+//                GL11.glClear(GL11.GL_SCISSOR_BIT);
+                GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            }
+            return;
+        }
+
+//        System.out.println("Clip Space: " + bounds);
+
+        if(!clipCurrentlyActive){
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        }
+
         int x = (int)(bounds.x() * 2f);
         int y = (int)((window.height() - (bounds.y() + bounds.height())) * 2f);
         int w = (int)(bounds.width() * 2f);
         int h = (int)(bounds.height() * 2f);
         GL11.glScissor(x, y, w, h);
-//        GL11.glScissor((int)bounds.x(), (int)(window.height() * 2 - (bounds.y() + bounds.height())), (int)bounds.width(), (int)bounds.height());
+        clipCurrentlyActive = true;
     }
 
 
     public void render(){
-//        System.out.println("Redering [" + lineInfoList.size() + "] Lines and [" + rectInfoList.size() + "] Rectangles, Depth: [" + curDepth + "]!");
+//        System.out.println("Redering [" + lineInfoList.size() + "] Lines, [" + rectInfoList.size() + "] Rectangles and [" + textInfoList.size() + "] Textcomponents, Depth: [" + curDepth + "]!");
 
 //        testShader.start();
 //        GL30.glBindVertexArray(rawTextureRectModel.vaoID);
@@ -287,6 +303,9 @@ public class UIRenderer implements IPencil {
 //        GL20.glDisableVertexAttribArray(1);
 //        GL30.glBindVertexArray(0);
 //        testShader.stop();
+
+        int[] scissorBox = new int[4];
+        GL11.glGetIntegerv(GL11.GL_SCISSOR_BOX, scissorBox);
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
@@ -308,7 +327,7 @@ public class UIRenderer implements IPencil {
         GL20.glEnableVertexAttribArray(0);
 
         for(LineInfo info : lineInfoList) {
-            if(info.clipSpace != null) activateClipSpace(info.clipSpace);
+            activateClipSpace(info.clipSpace);
 
             getUILineTransformation(TRANSFORM_MATRIX, info.x1, info.y1, info.x2, info.y2, info.depth, info.lineSize);
             lineShader.loadTransformationMatrix(TRANSFORM_MATRIX);
@@ -330,7 +349,7 @@ public class UIRenderer implements IPencil {
         GL20.glEnableVertexAttribArray(0);
 
         for(RectInfo info : rectInfoList) {
-            if(info.clipSpace != null) activateClipSpace(info.clipSpace);
+            activateClipSpace(info.clipSpace);
 
             getUITransformation(TRANSFORM_MATRIX, info.x, info.y, info.depth, info.w, info.h);
             rectShader.loadTransformationMatrix(TRANSFORM_MATRIX);
@@ -355,7 +374,7 @@ public class UIRenderer implements IPencil {
         GL13.glBindTexture(GL11.GL_TEXTURE_2D, fontTexture.textureID);
 
         for(TextInfo info : textInfoList) {
-            if(info.clipSpace != null) activateClipSpace(info.clipSpace);
+            activateClipSpace(info.clipSpace);
 
             textShader.loadColor(info.color);
 
@@ -394,6 +413,8 @@ public class UIRenderer implements IPencil {
         textInfoList.clear();
 
 
+
+        GL11.glScissor(scissorBox[0], scissorBox[1], scissorBox[2], scissorBox[3]);
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
         clippingStack.clear();
     }
@@ -415,11 +436,12 @@ public class UIRenderer implements IPencil {
         float ny = dy / dist;
 
         float rotation = (float) (Math.PI * 2f - Math.acos(nx));
+        int vz = ny < 0 ? -1 : 1;
 
 //        mat.translate(x1, window.height() - y1, depth);
         mat.translate(x1 - (nx * lineSize / 2f), window.height() - y1 + (ny * lineSize / 2f), depth);
 //        mat.translate(x1 + (nx * (lineSize - 1)), window.height() - y1 + (ny * (lineSize - 1)), depth);
-        mat.rotate(rotation, 0.0f, 0.0f, 1.0f);
+        mat.rotate(rotation, 0.0f, 0.0f, vz * 1.0f);
         mat.scale(dist + lineSize, lineSize, 1);
     }
 

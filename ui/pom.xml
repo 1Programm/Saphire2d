@@ -22,11 +22,16 @@
             <artifactId>saphire2d-core</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.programm.ge</groupId>
+            <artifactId>saphire2d-reactive-values</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.joml</groupId>
             <artifactId>joml</artifactId>
-            <scope>provided</scope>
+            <version>1.10.5</version>
         </dependency>
     </dependencies>
 

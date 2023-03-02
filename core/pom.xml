@@ -16,12 +16,4 @@
         <maven.compiler.target>16</maven.compiler.target>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.joml</groupId>
-            <artifactId>joml</artifactId>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-
 </project>

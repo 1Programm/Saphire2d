@@ -1,24 +1,19 @@
 package com.programm.ge.saphire2d.reactivevalues.filter;
 
-import com.programm.ge.saphire2d.reactivevalues.ChangeListener;
+import com.programm.ge.saphire2d.reactivevalues.AbstractObservable;
 import com.programm.ge.saphire2d.reactivevalues.Observable;
 
-public class Filter implements Observable {
+public abstract class Filter<T> extends AbstractObservable<T> implements Observable<T> {
 
-
-
-    @Override
-    public void addListener(ChangeListener listener) {
-
+    public Filter(Observable<T> observable){
+        observable.listenChange(this::onChange);
     }
 
-    @Override
-    public void removeListener(ChangeListener listener) {
+    protected abstract boolean filter(T val);
 
+    private void onChange(T val){
+        if(filter(val)) return;
+        notifyChange(val);
     }
 
-    @Override
-    public void addWeakListener(ChangeListener listener) {
-
-    }
 }

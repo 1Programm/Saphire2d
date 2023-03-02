@@ -4,15 +4,12 @@ import com.programm.ge.saphire2d.reactivevalues.ObservableValue;
 
 public class TrimExpression extends StringExpression {
 
-    private final ObservableValue<String> value;
-
     public TrimExpression(ObservableValue<String> value) {
         super(value);
-        this.value = value;
     }
 
     @Override
-    public String get() {
-        return value.get().trim();
+    protected String express(Object[] values) {
+        return ((String)values[0]).trim();
     }
 }

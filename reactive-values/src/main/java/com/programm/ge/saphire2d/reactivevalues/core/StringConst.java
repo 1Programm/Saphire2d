@@ -1,8 +1,8 @@
 package com.programm.ge.saphire2d.reactivevalues.core;
 
-import com.programm.ge.saphire2d.reactivevalues.ChangeListener;
+import com.programm.ge.saphire2d.reactivevalues.EmptyObservable;
 
-public class StringConst implements StringObservable {
+public class StringConst implements StringObservable, EmptyObservable<String> {
 
     private final String value;
     private final boolean empty;
@@ -36,18 +36,4 @@ public class StringConst implements StringObservable {
         return value;
     }
 
-    @Override
-    public void addListener(ChangeListener listener) {
-
-    }
-
-    @Override
-    public void removeListener(ChangeListener listener) {
-
-    }
-
-    @Override
-    public void addWeakListener(ChangeListener listener) {
-
-    }
 }

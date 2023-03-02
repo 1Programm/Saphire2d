@@ -4,6 +4,7 @@ import com.programm.ge.saphire2d.reactivevalues.ObservableValue;
 import com.programm.ge.saphire2d.reactivevalues.expression.bool.AndExpression;
 import com.programm.ge.saphire2d.reactivevalues.expression.bool.NotExpression;
 import com.programm.ge.saphire2d.reactivevalues.expression.bool.OrExpression;
+import com.programm.ge.saphire2d.reactivevalues.filter.BoolFilter;
 
 public interface BoolObservable extends ObservableValue<Boolean> {
 
@@ -23,6 +24,10 @@ public interface BoolObservable extends ObservableValue<Boolean> {
     default BoolObservable or(ObservableValue<Boolean> other)
     {
         return new OrExpression(this, other);
+    }
+
+    default BoolFilter onlyTrue(){
+        return new BoolFilter(this);
     }
 
 }

@@ -99,18 +99,13 @@ public abstract class FloatComparisonExpression extends BoolExpression {
 
 
 
-    private final ObservableValue<Float> val1;
-    private final ObservableValue<Float> val2;
-
     protected FloatComparisonExpression(ObservableValue<Float> val1, ObservableValue<Float> val2){
         super(val1, val2);
-        this.val1 = val1;
-        this.val2 = val2;
     }
 
     @Override
-    public Boolean get() {
-        return compare(val1.get(), val2.get());
+    protected Boolean express(Object[] values) {
+        return compare((float)values[0], (float)values[1]);
     }
 
     protected abstract Boolean compare(float val1, float val2);

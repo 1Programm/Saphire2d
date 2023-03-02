@@ -2,7 +2,6 @@ package com.programm.ge.saphire2d.engine.controls;
 
 import com.programm.ge.saphire2d.core.IMouse;
 import com.programm.ge.saphire2d.engine.SaphWindow;
-import com.programm.saphire2d.ui.IComponent;
 import lombok.RequiredArgsConstructor;
 import org.lwjgl.glfw.GLFW;
 

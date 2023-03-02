@@ -5,15 +5,12 @@ import com.programm.ge.saphire2d.reactivevalues.expression.number.IntExpression;
 
 public class SizeExpression extends IntExpression {
 
-    private final ObservableValue<String> value;
-
     public SizeExpression(ObservableValue<String> value) {
         super(value);
-        this.value = value;
     }
 
     @Override
-    public Integer get() {
-        return value.get().length();
+    protected Integer express(Object[] values) {
+        return ((String)values[0]).length();
     }
 }

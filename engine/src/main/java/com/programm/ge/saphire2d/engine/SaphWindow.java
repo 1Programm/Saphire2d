@@ -3,7 +3,7 @@ package com.programm.ge.saphire2d.engine;
 import com.programm.ge.saphire2d.core.bounds.IBounds;
 import com.programm.ge.saphire2d.engine.controls.SaphKeyboard;
 import com.programm.ge.saphire2d.engine.controls.SaphMouse;
-import com.programm.saphire2d.ui.IComponent;
+import com.programm.ge.saphire2d.ui.IComponent;
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -15,8 +15,8 @@ public class SaphWindow implements IBounds {
     private boolean visible;
     private int width, height;
 
-    private final SaphMouse mouse;
-    private final SaphKeyboard keyboard;
+    public final SaphMouse mouse;
+    public final SaphKeyboard keyboard;
 
     public IComponent ui;
 

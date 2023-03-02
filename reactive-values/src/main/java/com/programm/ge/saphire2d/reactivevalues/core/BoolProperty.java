@@ -13,5 +13,5 @@ public abstract class BoolProperty extends AbstractProperty<Boolean> implements 
     public BoolObservable equalTo(Boolean value) {
         return new EqualsExpression<>(this, value);
     }
-    
+
 }

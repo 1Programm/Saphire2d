@@ -2,7 +2,7 @@ package com.programm.ge.saphire2d.reactivevalues.core;
 
 import com.programm.ge.saphire2d.reactivevalues.ObservableValue;
 
-public interface NumberObservable <T> extends ObservableValue<T> {
+public interface NumberObservable <T extends Comparable<T>> extends ObservableValue<T>, FilterableNumber<T> {
 
     BoolObservable equalTo(ObservableValue<T> value);
 
@@ -23,5 +23,7 @@ public interface NumberObservable <T> extends ObservableValue<T> {
     BoolObservable greaterThanEqualTo(T value);
 
     BoolObservable lessThanEqualTo(T value);
+
+
 
 }

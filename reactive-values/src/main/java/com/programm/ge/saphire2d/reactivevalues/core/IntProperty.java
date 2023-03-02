@@ -4,63 +4,65 @@ import com.programm.ge.saphire2d.reactivevalues.AbstractProperty;
 import com.programm.ge.saphire2d.reactivevalues.ObservableValue;
 import com.programm.ge.saphire2d.reactivevalues.expression.number.IntComparisonExpression;
 
-public abstract class IntProperty extends AbstractProperty<Integer> implements IntObservable {
+public abstract class IntProperty extends AbstractProperty<Integer> implements IntObservable, OperationalNumberObservable<Integer> {
 
-    public void increment()
-    {
+    @Override
+    public void increment() {
         set(get() + 1);
     }
 
-    public void decrement()
-    {
+    @Override
+    public void decrement() {
         set(get() - 1);
     }
 
     @Override
-    public BoolObservable equalTo(ObservableValue<Integer> value)
-    {
+    public void add(Integer value) {
+        set(get() + value);
+    }
+
+    @Override
+    public void sub(Integer value) {
+        set(get() - value);
+    }
+
+    @Override
+    public BoolObservable equalTo(ObservableValue<Integer> value) {
         return IntComparisonExpression.EqualTo(this, value);
     }
 
     @Override
-    public BoolObservable greaterThan(ObservableValue<Integer> value)
-    {
+    public BoolObservable greaterThan(ObservableValue<Integer> value) {
         return IntComparisonExpression.GreaterThan(this, value);
     }
 
     @Override
-    public BoolObservable lessThan(ObservableValue<Integer> value)
-    {
+    public BoolObservable lessThan(ObservableValue<Integer> value) {
         return IntComparisonExpression.LessThan(this, value);
     }
 
     @Override
-    public BoolObservable greaterThanEqualTo(ObservableValue<Integer> value)
-    {
+    public BoolObservable greaterThanEqualTo(ObservableValue<Integer> value) {
         return IntComparisonExpression.GreaterThanEqual(this, value);
     }
 
     @Override
-    public BoolObservable lessThanEqualTo(ObservableValue<Integer> value)
-    {
+    public BoolObservable lessThanEqualTo(ObservableValue<Integer> value) {
         return IntComparisonExpression.LessThanEqual(this, value);
     }
 
     @Override
-    public BoolObservable equalTo(Integer value)
-    {
+    public BoolObservable equalTo(Integer value) {
         return IntComparisonExpression.EqualTo(this, value);
     }
 
     @Override
-    public BoolObservable greaterThan(Integer value)
-    {
+    public BoolObservable greaterThan(Integer value) {
         return IntComparisonExpression.GreaterThan(this, value);
     }
 
     @Override
-    public BoolObservable lessThan(Integer value)
-    {
+    public BoolObservable lessThan(Integer value) {
         return IntComparisonExpression.LessThan(this, value);
     }
 
@@ -70,8 +72,7 @@ public abstract class IntProperty extends AbstractProperty<Integer> implements I
     }
 
     @Override
-    public BoolObservable lessThanEqualTo(Integer value)
-    {
+    public BoolObservable lessThanEqualTo(Integer value) {
         return IntComparisonExpression.LessThanEqual(this, value);
     }
 

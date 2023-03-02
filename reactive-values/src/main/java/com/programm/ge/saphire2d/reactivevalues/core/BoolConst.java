@@ -1,8 +1,8 @@
 package com.programm.ge.saphire2d.reactivevalues.core;
 
-import com.programm.ge.saphire2d.reactivevalues.ChangeListener;
+import com.programm.ge.saphire2d.reactivevalues.EmptyObservable;
 
-public class BoolConst implements BoolObservable {
+public class BoolConst implements BoolObservable, EmptyObservable<Boolean> {
 
     private final boolean value;
 
@@ -19,18 +19,4 @@ public class BoolConst implements BoolObservable {
         return value;
     }
 
-    @Override
-    public void addListener(ChangeListener listener) {
-
-    }
-
-    @Override
-    public void removeListener(ChangeListener listener) {
-
-    }
-
-    @Override
-    public void addWeakListener(ChangeListener listener) {
-
-    }
 }

@@ -6,7 +6,7 @@ import com.programm.ge.saphire2d.reactivevalues.core.BoolProperty;
 import com.programm.ge.saphire2d.reactivevalues.core.BoolPropertyValue;
 import com.programm.ge.saphire2d.reactivevalues.core.BoolObservable;
 
-public abstract class AdapterProperty<S, D> extends AbstractProperty<D> implements ChangeListener {
+public abstract class AdapterProperty<S, D> extends AbstractProperty<D> implements ChangeListener<S> {
 
     private final AbstractProperty<S> wrappedPropery;
     private final BoolProperty inSync = new BoolPropertyValue();
@@ -15,7 +15,8 @@ public abstract class AdapterProperty<S, D> extends AbstractProperty<D> implemen
 
     public AdapterProperty(AbstractProperty<S> wrappedPropery, D initialValue) {
         this.wrappedPropery = wrappedPropery;
-        this.wrappedPropery.addWeakListener(this);
+//        this.wrappedPropery.addWeakListener(this);
+        this.wrappedPropery.listenChange(this);
         this.lastValue = initialValue;
     }
 
@@ -37,9 +38,9 @@ public abstract class AdapterProperty<S, D> extends AbstractProperty<D> implemen
     }
 
     @Override
-    public void onChange() {
+    public void onChange(S src) {
         trySync();
-        notifyChange();
+        notifyChange(lastValue);
     }
 
     protected abstract D convertSrcToDest(S value);

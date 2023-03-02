@@ -1,7 +1,7 @@
 package com.programm.ge.saphire2d.reactivevalues;
 
-public interface ChangeListener {
+public interface ChangeListener<T> {
 
-    void onChange();
+    void onChange(T val);
 
 }

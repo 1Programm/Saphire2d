@@ -1,10 +1,10 @@
 package com.programm.ge.saphire2d.reactivevalues.core;
 
-import com.programm.ge.saphire2d.reactivevalues.ChangeListener;
+import com.programm.ge.saphire2d.reactivevalues.EmptyObservable;
 import com.programm.ge.saphire2d.reactivevalues.ObservableValue;
 import com.programm.ge.saphire2d.reactivevalues.expression.number.IntComparisonExpression;
 
-public class IntConst implements IntObservable {
+public class IntConst implements IntObservable, EmptyObservable<Integer> {
 
     private final int value;
 
@@ -17,24 +17,6 @@ public class IntConst implements IntObservable {
     public Integer get()
     {
         return value;
-    }
-
-    @Override
-    public void addListener(ChangeListener listener)
-    {
-
-    }
-
-    @Override
-    public void removeListener(ChangeListener listener)
-    {
-
-    }
-
-    @Override
-    public void addWeakListener(ChangeListener listener)
-    {
-
     }
 
     @Override
