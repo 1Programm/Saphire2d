@@ -3,13 +3,13 @@ package com.programm.ge.saphire2d.reactivevalues.adapter;
 import com.programm.ge.saphire2d.reactivevalues.AbstractProperty;
 import com.programm.ge.saphire2d.reactivevalues.ChangeListener;
 import com.programm.ge.saphire2d.reactivevalues.core.BoolProperty;
-import com.programm.ge.saphire2d.reactivevalues.core.BoolValueProperty;
-import com.programm.ge.saphire2d.reactivevalues.core.ObservableBool;
+import com.programm.ge.saphire2d.reactivevalues.core.BoolPropertyValue;
+import com.programm.ge.saphire2d.reactivevalues.core.BoolObservable;
 
 public abstract class AdapterProperty<S, D> extends AbstractProperty<D> implements ChangeListener {
 
     private final AbstractProperty<S> wrappedPropery;
-    private final BoolProperty inSync = new BoolValueProperty();
+    private final BoolProperty inSync = new BoolPropertyValue();
     private D lastValue;
     private boolean needsInitialSync = true;
 
@@ -31,7 +31,7 @@ public abstract class AdapterProperty<S, D> extends AbstractProperty<D> implemen
         return lastValue;
     }
 
-    public ObservableBool inSync() {
+    public BoolObservable inSync() {
         doInitialSync();
         return inSync;
     }

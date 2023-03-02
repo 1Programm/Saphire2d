@@ -1,5 +1,7 @@
 package com.programm.ge.saphire2d.reactivevalues;
 
+import com.programm.ge.saphire2d.reactivevalues.constraint.Constraint;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,7 +73,4 @@ public abstract class AbstractProperty <T> extends AbstractObservableValue<T> im
         return get().toString();
     }
 
-    public interface Constraint<T> {
-        T constrain(T value);
-    }
 }

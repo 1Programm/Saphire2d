@@ -1,13 +1,13 @@
-package com.programm.ge.saphire2d.reactivevalues.expression.integer;
+package com.programm.ge.saphire2d.reactivevalues.expression.number;
 
 import com.programm.ge.saphire2d.reactivevalues.ObservableValue;
-import com.programm.ge.saphire2d.reactivevalues.core.IntValueProperty;
-import com.programm.ge.saphire2d.reactivevalues.core.ObservableBool;
+import com.programm.ge.saphire2d.reactivevalues.core.IntPropertyValue;
+import com.programm.ge.saphire2d.reactivevalues.core.BoolObservable;
 import com.programm.ge.saphire2d.reactivevalues.expression.bool.BoolExpression;
 
 public abstract class IntComparisonExpression extends BoolExpression {
 
-    public static ObservableBool EqualTo(ObservableValue<Integer> val1, ObservableValue<Integer> val2){
+    public static BoolObservable EqualTo(ObservableValue<Integer> val1, ObservableValue<Integer> val2){
         return new IntComparisonExpression(val1, val2) {
             @Override
             protected Boolean compare(int val1, int val2) {
@@ -16,7 +16,7 @@ public abstract class IntComparisonExpression extends BoolExpression {
         };
     }
 
-    public static ObservableBool GreaterThan(ObservableValue<Integer> val1, ObservableValue<Integer> val2){
+    public static BoolObservable GreaterThan(ObservableValue<Integer> val1, ObservableValue<Integer> val2){
         return new IntComparisonExpression(val1, val2) {
             @Override
             protected Boolean compare(int val1, int val2) {
@@ -25,7 +25,7 @@ public abstract class IntComparisonExpression extends BoolExpression {
         };
     }
 
-    public static ObservableBool GreaterThanEqual(ObservableValue<Integer> val1, ObservableValue<Integer> val2){
+    public static BoolObservable GreaterThanEqual(ObservableValue<Integer> val1, ObservableValue<Integer> val2){
         return new IntComparisonExpression(val1, val2) {
             @Override
             protected Boolean compare(int val1, int val2) {
@@ -34,7 +34,7 @@ public abstract class IntComparisonExpression extends BoolExpression {
         };
     }
 
-    public static ObservableBool LessThan(ObservableValue<Integer> val1, ObservableValue<Integer> val2){
+    public static BoolObservable LessThan(ObservableValue<Integer> val1, ObservableValue<Integer> val2){
         return new IntComparisonExpression(val1, val2) {
             @Override
             protected Boolean compare(int val1, int val2) {
@@ -43,7 +43,7 @@ public abstract class IntComparisonExpression extends BoolExpression {
         };
     }
 
-    public static ObservableBool LessThanEqual(ObservableValue<Integer> val1, ObservableValue<Integer> val2){
+    public static BoolObservable LessThanEqual(ObservableValue<Integer> val1, ObservableValue<Integer> val2){
         return new IntComparisonExpression(val1, val2) {
             @Override
             protected Boolean compare(int val1, int val2) {
@@ -52,8 +52,8 @@ public abstract class IntComparisonExpression extends BoolExpression {
         };
     }
 
-    public static ObservableBool EqualTo(ObservableValue<Integer> val1, int val2){
-        return new IntComparisonExpression(val1, new IntValueProperty(val2)) {
+    public static BoolObservable EqualTo(ObservableValue<Integer> val1, int val2){
+        return new IntComparisonExpression(val1, new IntPropertyValue(val2)) {
             @Override
             protected Boolean compare(int val1, int val2) {
                 return val1 == val2;
@@ -61,8 +61,8 @@ public abstract class IntComparisonExpression extends BoolExpression {
         };
     }
 
-    public static ObservableBool GreaterThan(ObservableValue<Integer> val1, int val2){
-        return new IntComparisonExpression(val1, new IntValueProperty(val2)) {
+    public static BoolObservable GreaterThan(ObservableValue<Integer> val1, int val2){
+        return new IntComparisonExpression(val1, new IntPropertyValue(val2)) {
             @Override
             protected Boolean compare(int val1, int val2) {
                 return val1 > val2;
@@ -70,8 +70,8 @@ public abstract class IntComparisonExpression extends BoolExpression {
         };
     }
 
-    public static ObservableBool GreaterThanEqual(ObservableValue<Integer> val1, int val2){
-        return new IntComparisonExpression(val1, new IntValueProperty(val2)) {
+    public static BoolObservable GreaterThanEqual(ObservableValue<Integer> val1, int val2){
+        return new IntComparisonExpression(val1, new IntPropertyValue(val2)) {
             @Override
             protected Boolean compare(int val1, int val2) {
                 return val1 >= val2;
@@ -79,8 +79,8 @@ public abstract class IntComparisonExpression extends BoolExpression {
         };
     }
 
-    public static ObservableBool LessThan(ObservableValue<Integer> val1, int val2){
-        return new IntComparisonExpression(val1, new IntValueProperty(val2)) {
+    public static BoolObservable LessThan(ObservableValue<Integer> val1, int val2){
+        return new IntComparisonExpression(val1, new IntPropertyValue(val2)) {
             @Override
             protected Boolean compare(int val1, int val2) {
                 return val1 < val2;
@@ -88,8 +88,8 @@ public abstract class IntComparisonExpression extends BoolExpression {
         };
     }
 
-    public static ObservableBool LessThanEqual(ObservableValue<Integer> val1, int val2){
-        return new IntComparisonExpression(val1, new IntValueProperty(val2)) {
+    public static BoolObservable LessThanEqual(ObservableValue<Integer> val1, int val2){
+        return new IntComparisonExpression(val1, new IntPropertyValue(val2)) {
             @Override
             protected Boolean compare(int val1, int val2) {
                 return val1 <= val2;

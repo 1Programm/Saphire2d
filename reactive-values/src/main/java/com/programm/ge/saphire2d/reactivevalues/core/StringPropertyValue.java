@@ -1,14 +1,14 @@
 package com.programm.ge.saphire2d.reactivevalues.core;
 
-public class StringValueProperty extends StringProperty {
+public class StringPropertyValue extends StringProperty {
 
     private String value;
 
-    public StringValueProperty() {
+    public StringPropertyValue() {
         this("");
     }
 
-    public StringValueProperty(String value) {
+    public StringPropertyValue(String value) {
         this.value = value;
     }
 

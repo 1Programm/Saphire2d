@@ -1,19 +1,40 @@
 package com.programm.ge.saphire2d.reactivevalues.core;
 
-import com.programm.ge.saphire2d.reactivevalues.AbstractProperty;
+import com.programm.ge.saphire2d.reactivevalues.ChangeListener;
 import com.programm.ge.saphire2d.reactivevalues.ObservableValue;
 import com.programm.ge.saphire2d.reactivevalues.expression.number.IntComparisonExpression;
 
-public abstract class IntProperty extends AbstractProperty<Integer> implements IntObservable {
+public class IntConst implements IntObservable {
 
-    public void increment()
+    private final int value;
+
+    public IntConst(int value)
     {
-        set(get() + 1);
+        this.value = value;
     }
 
-    public void decrement()
+    @Override
+    public Integer get()
     {
-        set(get() - 1);
+        return value;
+    }
+
+    @Override
+    public void addListener(ChangeListener listener)
+    {
+
+    }
+
+    @Override
+    public void removeListener(ChangeListener listener)
+    {
+
+    }
+
+    @Override
+    public void addWeakListener(ChangeListener listener)
+    {
+
     }
 
     @Override
@@ -65,7 +86,8 @@ public abstract class IntProperty extends AbstractProperty<Integer> implements I
     }
 
     @Override
-    public BoolObservable greaterThanEqualTo(Integer value) {
+    public BoolObservable greaterThanEqualTo(Integer value)
+    {
         return IntComparisonExpression.GreaterThanEqual(this, value);
     }
 

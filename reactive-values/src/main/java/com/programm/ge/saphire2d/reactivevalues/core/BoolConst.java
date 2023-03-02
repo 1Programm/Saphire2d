@@ -2,15 +2,15 @@ package com.programm.ge.saphire2d.reactivevalues.core;
 
 import com.programm.ge.saphire2d.reactivevalues.ChangeListener;
 
-public class ConstBool implements ObservableBool {
+public class BoolConst implements BoolObservable {
 
     private final boolean value;
 
-    public ConstBool() {
+    public BoolConst() {
         this(false);
     }
 
-    public ConstBool(boolean value) {
+    public BoolConst(boolean value) {
         this.value = value;
     }
 

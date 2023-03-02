@@ -1,29 +1,29 @@
 package com.programm.ge.saphire2d.reactivevalues.expression.string;
 
 import com.programm.ge.saphire2d.reactivevalues.ObservableValue;
-import com.programm.ge.saphire2d.reactivevalues.core.ObservableBool;
-import com.programm.ge.saphire2d.reactivevalues.core.ObservableInt;
-import com.programm.ge.saphire2d.reactivevalues.core.ObservableString;
+import com.programm.ge.saphire2d.reactivevalues.core.BoolObservable;
+import com.programm.ge.saphire2d.reactivevalues.core.IntObservable;
+import com.programm.ge.saphire2d.reactivevalues.core.StringObservable;
 import com.programm.ge.saphire2d.reactivevalues.expression.Expression;
 
-public abstract class StringExpression extends Expression<String> implements ObservableString {
+public abstract class StringExpression extends Expression<String> implements StringObservable {
 
     protected StringExpression(ObservableValue<?>... values){
         super(values);
     }
 
     @Override
-    public ObservableBool isEmpty() {
+    public BoolObservable isEmpty() {
         return new IsEmptyExpression(this);
     }
 
     @Override
-    public ObservableString trim() {
+    public StringObservable trim() {
         return new TrimExpression(this);
     }
 
     @Override
-    public ObservableInt size() {
+    public IntObservable size() {
         return new SizeExpression(this);
     }
 }

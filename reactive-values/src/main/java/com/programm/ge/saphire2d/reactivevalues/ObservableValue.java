@@ -1,6 +1,6 @@
 package com.programm.ge.saphire2d.reactivevalues;
 
-import com.programm.ge.saphire2d.reactivevalues.core.ObservableBool;
+import com.programm.ge.saphire2d.reactivevalues.core.BoolObservable;
 
 public interface ObservableValue<T> {
 
@@ -12,7 +12,7 @@ public interface ObservableValue<T> {
 
   void addWeakListener(ChangeListener listener);
 
-  default ObservableBool equalTo(T value)
+  default BoolObservable equalTo(T value)
   {
     return null;
   }

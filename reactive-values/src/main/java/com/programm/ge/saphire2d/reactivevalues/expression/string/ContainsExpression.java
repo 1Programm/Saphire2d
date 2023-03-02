@@ -1,7 +1,7 @@
 package com.programm.ge.saphire2d.reactivevalues.expression.string;
 
 import com.programm.ge.saphire2d.reactivevalues.ObservableValue;
-import com.programm.ge.saphire2d.reactivevalues.core.ConstString;
+import com.programm.ge.saphire2d.reactivevalues.core.StringConst;
 import com.programm.ge.saphire2d.reactivevalues.expression.bool.BoolExpression;
 
 public class ContainsExpression extends BoolExpression {
@@ -10,7 +10,7 @@ public class ContainsExpression extends BoolExpression {
     private final ObservableValue<String> toContain;
 
     public ContainsExpression(ObservableValue<String> value, String toContain) {
-        this(value, new ConstString(toContain));
+        this(value, new StringConst(toContain));
     }
 
     public ContainsExpression(ObservableValue<String> value, ObservableValue<String> toContain) {

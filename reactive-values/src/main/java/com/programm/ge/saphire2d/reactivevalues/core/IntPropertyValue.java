@@ -1,14 +1,14 @@
 package com.programm.ge.saphire2d.reactivevalues.core;
 
-public class IntValueProperty extends IntProperty {
+public class IntPropertyValue extends IntProperty {
 
     private Integer value;
 
-    public IntValueProperty() {
+    public IntPropertyValue() {
         this(0);
     }
 
-    public IntValueProperty(Integer value) {
+    public IntPropertyValue(Integer value) {
         this.value = value;
     }
 

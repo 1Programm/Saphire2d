@@ -5,24 +5,24 @@ import com.programm.ge.saphire2d.reactivevalues.expression.string.IsEmptyExpress
 import com.programm.ge.saphire2d.reactivevalues.expression.string.SizeExpression;
 import com.programm.ge.saphire2d.reactivevalues.expression.string.TrimExpression;
 
-public abstract class StringProperty extends AbstractProperty<String> implements ObservableString {
+public abstract class StringProperty extends AbstractProperty<String> implements StringObservable {
 
     public void clear(){
         set("");
     }
 
     @Override
-    public ObservableBool isEmpty() {
+    public BoolObservable isEmpty() {
         return new IsEmptyExpression(this);
     }
 
     @Override
-    public ObservableString trim() {
+    public StringObservable trim() {
         return new TrimExpression(this);
     }
 
     @Override
-    public ObservableInt size() {
+    public IntObservable size() {
         return new SizeExpression(this);
     }
 }
