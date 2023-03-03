@@ -7,7 +7,6 @@ import com.programm.ge.saphire2d.engine.model.RawModel;
 import com.programm.ge.saphire2d.engine.model.Texture;
 import com.programm.ge.saphire2d.engine.model.font.Character;
 import com.programm.ge.saphire2d.engine.model.font.FontMetadata;
-import com.programm.ge.saphire2d.engine.shader.TestShader2;
 import com.programm.ge.saphire2d.engine.shader.UILineShader;
 import com.programm.ge.saphire2d.engine.shader.UIRectangleShader;
 import com.programm.ge.saphire2d.engine.shader.UITextShader;
@@ -67,7 +66,6 @@ public class UIRenderer implements IPencil {
 
     private final Texture fontTexture;
     private final FontMetadata fontMetaFile;
-    private final Texture testTexture;
 
     private final List<LineInfo> lineInfoList = new ArrayList<>();
     private final List<RectInfo> rectInfoList = new ArrayList<>();
@@ -76,7 +74,6 @@ public class UIRenderer implements IPencil {
     private final UIRectangleShader rectShader = new UIRectangleShader();
     private final UILineShader lineShader = new UILineShader();
     private final UITextShader textShader = new UITextShader();
-    private final TestShader2 testShader = new TestShader2();
 
     private float curDepth;
     private final Stack<IBounds> clippingStack = new Stack<>();
@@ -127,9 +124,8 @@ public class UIRenderer implements IPencil {
                 }
         );
 
-        fontTexture = ModelLoader.loadTexture("/ui/fonts/arial.png", 1);
+        fontTexture = ModelLoader.loadTexture("/ui/fonts/arial.png", 1, 1);
         fontMetaFile = FontMetadata.load("/ui/fonts/arial.fnt", window.aspectRatio());
-        testTexture = ModelLoader.loadTexture("/ui/fonts/Test.png", 1);
     }
 
     public void init(Matrix4f projectionMatrix){
@@ -142,9 +138,6 @@ public class UIRenderer implements IPencil {
         textShader.start();
         textShader.loadProjectionMatrix(projectionMatrix);
         textShader.stop();
-        testShader.start();
-        testShader.loadProjectionMatrix(projectionMatrix);
-        testShader.stop();
 
 
         //GL11.glScissor(0, 0, (int)(window.width() * 2), (int) (window.height() * 2));

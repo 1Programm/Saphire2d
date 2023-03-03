@@ -1,14 +1,15 @@
 package com.programm.ge.saphire2d.engine;
 
+import com.programm.ge.saphire2d.core.IKeyboard;
+import com.programm.ge.saphire2d.core.IMouse;
 import com.programm.ge.saphire2d.core.bounds.ConstantBounds;
 import com.programm.ge.saphire2d.core.bounds.IBounds;
 import com.programm.ge.saphire2d.engine.renderer.SaphRenderer;
 import com.programm.ge.saphire2d.engine.renderer.UIRenderer;
+import com.programm.ge.saphire2d.engine.scene.Scene;
+import com.programm.ge.saphire2d.engine.scene.SceneContext;
 import com.programm.ge.saphire2d.engine.utils.MathUtils;
-import com.programm.ge.saphire2d.reactivevalues.core.*;
-import com.programm.ge.saphire2d.reactivevalues.expression.string.FormatExpression;
-import com.programm.ge.saphire2d.ui.elements.*;
-import com.programm.ge.saphire2d.ui.elements.layout.GridLayout;
+import com.programm.ge.saphire2d.ui.elements.SUIView;
 import com.programm.ge.saphire2d.ui.utils.Colors;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
@@ -19,12 +20,32 @@ import org.lwjgl.system.MemoryUtil;
 
 public class SaphEngine {
 
+    private class InnerSceneContext implements SceneContext {
+        @Override
+        public IMouse mouse() {
+            return window.mouse;
+        }
+
+        @Override
+        public IKeyboard keyboard() {
+            return window.keyboard;
+        }
+
+        @Override
+        public double delta() {
+            return delta;
+        }
+    }
+
     private static final Matrix4f PROJECTION_MATRIX = new Matrix4f();
 
     private final SaphWindow window;
 
     private final SaphRenderer renderer;
     private final UIRenderer uiRenderer;
+
+    private final SceneContext sceneContext = new InnerSceneContext();
+    private double delta = 0;
 
     public SaphEngine(String title, int width, int height){
         init();
@@ -96,78 +117,32 @@ public class SaphEngine {
         return window;
     }
 
-    public void run(SaphObjectHandler handler){
-        SUIView view = new SUIView();
-        view.primary(Colors.BLACK);
-        window.ui = view;
-
-        buildUI(view);
+    public void run(Scene scene){
 
 
+//        IBounds b = new ConstantBounds(100, 50, 300, 300);
 
-        IBounds b = new ConstantBounds(100, 50, 300, 300);
-
-
+        double last = GLFW.glfwGetTime();
         while(!window.shouldClose()){
-            view.render(b, uiRenderer);
+            window.ui.render(window, uiRenderer);
 
-
+            scene.update(sceneContext);
 
             renderer.prepare();
-            renderer.render(handler);
+            renderer.render(scene);
             uiRenderer.render();
 
             GLFW.glfwSwapBuffers(window.id());
 
             GLFW.glfwPollEvents();
+
+            double cur = GLFW.glfwGetTime();
+            delta = cur - last;
+            last = cur;
         }
     }
 
-    private BoolObservable eq2;
-
     private void buildUI(SUIView view){
-        SUITabView tabView = new SUITabView();
-        tabView.primary(Colors.BLACK);
-        view.add(tabView);
-
-        SUIView v1 = new SUIView(new GridLayout(3, 3));
-        v1.secondary(Colors.WHITE);
-
-        SUIButton btn1 = new SUIButton("Count up!");
-        v1.add(btn1);
-
-        SUILabel label1 = new SUILabel("Count: 0");
-        label1.text().bind(new FormatExpression("Count: %s", btn1.pressed().onlyTrue().countChange()));
-        v1.add(label1);
-
-
-
-
-
-        tabView.add(v1, "Tab 1----------");
-
-        SUIView v2 = new SUIView(new GridLayout(3, 3));
-        v2.secondary(Colors.WHITE);
-        v2.add(new SUIButton("My Button 2"), 0);
-        tabView.add(v2, "Cooler Tab 2");
-
-
-        SUICombobox<String> myCombo = new SUICombobox<>();
-        myCombo.selectionMaxHeight().set(80f);
-        for(int i=1;i<=10;i++){
-            myCombo.addItem("" + i);
-        }
-        v2.add(myCombo, 4);
-
-//        SUIButton btn = new SUIButton("Hello");
-//        btn.listenPressed(() -> System.out.println("Heyyy"));
-//        view.add(btn);
-
-//        WaveLabel label = new WaveLabel("My Label");
-//        label.fontSize(50);
-//        view.add(label);
-
-
 
 
     }
@@ -186,6 +161,10 @@ public class SaphEngine {
         window.cleanup();
         GLFW.glfwTerminate();
         GLFW.glfwSetErrorCallback(null).free();
+    }
+
+    public SaphWindow window(){
+        return window;
     }
 
 }

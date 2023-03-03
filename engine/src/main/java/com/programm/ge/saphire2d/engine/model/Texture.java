@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 public class Texture {
 
     public final int textureID;
-    public final int numberOfRows;
+    public final int spriteSheetWidth;
+    public final int spriteSheetHeight;
 
 }

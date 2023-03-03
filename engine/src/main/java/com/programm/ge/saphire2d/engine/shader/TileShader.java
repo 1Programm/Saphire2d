@@ -1,16 +1,17 @@
 package com.programm.ge.saphire2d.engine.shader;
 
+import com.programm.ge.saphire2d.engine.model.Sprite;
 import org.joml.Matrix4f;
 
-public class TestShader1 extends Shader {
+public class TileShader extends Shader {
 
     private int projection_loc;
     private int transform_loc;
-    private int tex_numRows_loc;
+    private int tex_size_loc;
     private int tex_offset_loc;
 
-    public TestShader1() {
-        super("/shaders/TestShader1");
+    public TileShader() {
+        super("/shaders/game/TestShader");
     }
 
     @Override
@@ -23,7 +24,7 @@ public class TestShader1 extends Shader {
     protected void loadUniformLocations() {
         projection_loc = getUniformLocation("projection");
         transform_loc = getUniformLocation("transform");
-        tex_numRows_loc = getUniformLocation("tex_numRows");
+        tex_size_loc = getUniformLocation("tex_size");
         tex_offset_loc = getUniformLocation("tex_offset");
     }
 
@@ -35,18 +36,17 @@ public class TestShader1 extends Shader {
         loadMatrix(transform_loc, m);
     }
 
-    public void loadNumberOfRows(int numRows){
-        loadFloat(tex_numRows_loc, numRows);
-    }
+    public void loadSpriteSheet(int ssw, int ssh, int x, int y){
+        loadFloat2(tex_size_loc, ssw, ssh);
 
-    public void loadTextureIndex(int numRows, int texIndex){
-        int col = texIndex % numRows;
-        float offX = (float)col / numRows;
-
-        int row = texIndex / numRows;
-        float offY = (float)row / numRows;
+        float offX = (float)x / ssw;
+        float offY = (float)y / ssh;
 
         loadFloat2(tex_offset_loc, offX, offY);
+    }
+
+    public void loadSpriteSheet(Sprite sprite){
+        loadSpriteSheet(sprite.texture.spriteSheetWidth, sprite.texture.spriteSheetHeight, sprite.spriteX, sprite.spriteY);
     }
 
 }

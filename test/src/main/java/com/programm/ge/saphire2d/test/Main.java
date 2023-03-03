@@ -1,10 +1,12 @@
 package com.programm.ge.saphire2d.test;
 
 import com.programm.ge.saphire2d.engine.SaphEngine;
-import com.programm.ge.saphire2d.engine.SaphObjectHandler;
-import com.programm.ge.saphire2d.engine.model.GObject;
+import com.programm.ge.saphire2d.engine.game.objects.GameObject;
+import com.programm.ge.saphire2d.engine.game.objects.KeyboardControllBehavior;
+import com.programm.ge.saphire2d.engine.game.objects.SpriteAnimator;
 import com.programm.ge.saphire2d.engine.model.RawModel;
-import com.programm.ge.saphire2d.engine.model.TexturedModel;
+import com.programm.ge.saphire2d.engine.scene.Scene;
+import com.programm.ge.saphire2d.engine.scene.TileMap;
 import com.programm.ge.saphire2d.engine.utils.ModelLoader;
 import com.programm.ioutils.log.api.ILogger;
 import com.programm.ioutils.log.api.Logger;
@@ -28,39 +30,40 @@ public class Main {
         SaphEngine engine = new SaphEngine("Hello World!", 600, 500);
 //        engine.debugMode();
 
-        RawModel quadModel = createQuad();
-        TexturedModel quad1 = new TexturedModel(quadModel, ModelLoader.loadTexture("/textures/Test.png", 1));
-
-
-        SaphObjectHandler handler = new SaphObjectHandler();
-
-        GObject obj = new GObject();
-        obj.textureIndex = 2;
-        obj.size.set(100, 100);
-        obj.position.set(50, 50, 0);
-        handler.add(quad1, obj);
-
-        obj = new GObject();
-        obj.textureIndex = 3;
-        obj.size.set(100, 100);
-        obj.position.set(160, 50, 0);
-        handler.add(quad1, obj);
-
-        obj = new GObject();
-        obj.textureIndex = 0;
-        obj.size.set(100, 100);
-        obj.position.set(50, 160, 0);
-        handler.add(quad1, obj);
-
-        obj = new GObject();
-        obj.textureIndex = 1;
-        obj.size.set(100, 100);
-        obj.position.set(160, 160, 0);
-        handler.add(quad1, obj);
 
 
 
-        engine.run(handler);
+
+
+        Scene sceneA = new Scene(new TileMap(10, 10, 2, 32, 32));
+        sceneA.loadSprite(0, "/textures/GroundSpriteSheet.png", 8, 8, 0, 0);
+        sceneA.loadSprite(1, "/textures/GroundSpriteSheet.png", 8, 8, 1, 0);
+        sceneA.loadSprite(2, "/textures/GroundSpriteSheet.png", 8, 8, 2, 0);
+
+
+        for(int x=0;x<8;x++){
+            for(int y=0;y<4;y++){
+                sceneA.tileMap.setTile(x, y, 0, 0);
+            }
+        }
+
+        for(int i=0;i<8;i++) sceneA.tileMap.setTile(i, 4, 0, 1);
+        for(int i=0;i<8;i++) sceneA.tileMap.setTile(i, 5, 0, 2);
+
+
+        sceneA.loadSprite(10, "/textures/Char1SS.png", 8, 4, 1, 0);
+        sceneA.loadSprite(11, "/textures/Char1SS.png", 8, 4, 2, 1);
+        sceneA.loadSprite(12, "/textures/Char1SS.png", 8, 4, 3, 1);
+        GameObject obj = new GameObject();
+        obj.spriteId = 10;
+        obj.transformation.position.set(100, 100, 0);
+        obj.transformation.size.set(50, 50);
+        obj.behaviors.add(new KeyboardControllBehavior(300));
+        obj.behaviors.add(new SpriteAnimator(0.2f, 11, 12));
+        sceneA.objects.add(obj);
+
+
+        engine.run(sceneA);
 
 
         ModelLoader.cleanup();

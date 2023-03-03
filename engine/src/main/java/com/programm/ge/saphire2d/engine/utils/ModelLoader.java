@@ -24,7 +24,7 @@ public class ModelLoader {
     private static final List<Integer> VBOS = new ArrayList<>();
     private static final List<Integer> TEXTURES = new ArrayList<>();
 
-    public static Texture loadTexture(String name, int numRows){
+    public static Texture loadTexture(String name, int ssWidth, int ssHeight){
         BufferedImage image;
         try {
             InputStream is = ModelLoader.class.getResourceAsStream(name);
@@ -64,7 +64,7 @@ public class ModelLoader {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 
-        return new Texture(textureID, numRows);
+        return new Texture(textureID, ssWidth, ssHeight);
     }
 
 //    public static Texture loadTexture(String name){

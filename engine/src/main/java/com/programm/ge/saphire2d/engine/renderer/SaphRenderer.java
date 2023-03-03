@@ -1,10 +1,13 @@
 package com.programm.ge.saphire2d.engine.renderer;
 
-import com.programm.ge.saphire2d.engine.SaphObjectHandler;
-import com.programm.ge.saphire2d.engine.model.GObject;
+import com.programm.ge.saphire2d.engine.game.objects.GameObject;
 import com.programm.ge.saphire2d.engine.model.RawModel;
-import com.programm.ge.saphire2d.engine.model.TexturedModel;
-import com.programm.ge.saphire2d.engine.shader.TestShader1;
+import com.programm.ge.saphire2d.engine.model.Sprite;
+import com.programm.ge.saphire2d.engine.scene.Scene;
+import com.programm.ge.saphire2d.engine.scene.TileMap;
+import com.programm.ge.saphire2d.engine.shader.TileShader;
+import com.programm.ge.saphire2d.engine.utils.MathUtils;
+import com.programm.ge.saphire2d.engine.utils.ModelLoader;
 import lombok.RequiredArgsConstructor;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
@@ -17,12 +20,36 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SaphRenderer {
 
-    private final TestShader1 shader = new TestShader1();
+    private static final Matrix4f TRANSFORM_MATRIX = new Matrix4f();
+
+    private final TileShader tileShader = new TileShader();
+    private final RawModel rawRectModel;
+
+    public SaphRenderer() {
+        rawRectModel = ModelLoader.loadModel(2,
+                new float[]{
+                        -0.5f,  0.5f,
+                        -0.5f, -0.5f,
+                        0.5f, -0.5f,
+                        0.5f,  0.5f,
+                },
+                new float[]{
+                        0.0f, 0.0f,
+                        0.0f, 1.0f,
+                        1.0f, 1.0f,
+                        1.0f, 0.0f,
+                },
+                new int[]{
+                        0,1,3,
+                        3,1,2,
+                }
+        );
+    }
 
     public void init(Matrix4f projectionMatrix){
-        shader.start();
-        shader.loadProjectionMatrix(projectionMatrix);
-        shader.stop();
+        tileShader.start();
+        tileShader.loadProjectionMatrix(projectionMatrix);
+        tileShader.stop();
 
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthFunc(GL11.GL_LEQUAL); //Text is same depth so characters might overlay some others
@@ -36,73 +63,87 @@ public class SaphRenderer {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     }
 
-    public void render(SaphObjectHandler handler){
-        shader.start();
+    public void render(Scene scene){
 
-        for(TexturedModel tm : handler.objects.keySet()){
-            List<GObject> batch = handler.objects.get(tm);
+        tileShader.start();
+        GL30.glBindVertexArray(rawRectModel.vaoID);
+        GL20.glEnableVertexAttribArray(0);
+        GL20.glEnableVertexAttribArray(1);
 
-            GL30.glBindVertexArray(tm.model.vaoID);
-            GL20.glEnableVertexAttribArray(0);
-            GL20.glEnableVertexAttribArray(1);
+//        renderTileMap(scene);
+        renderTileMapOptimized(scene);
 
-            GL13.glActiveTexture(GL13.GL_TEXTURE0);
-            GL13.glBindTexture(GL11.GL_TEXTURE_2D, tm.texture.textureID);
-
-            shader.loadNumberOfRows(tm.texture.numberOfRows);
-
-            for(GObject obj : batch){
-                renderObject(tm, obj);
-            }
-
-            GL20.glDisableVertexAttribArray(0);
-            GL20.glDisableVertexAttribArray(1);
-            GL30.glBindVertexArray(0);
-
+        for(GameObject obj : scene.objects){
+            renderObject(scene, obj);
         }
 
-        shader.stop();
+
+        GL20.glDisableVertexAttribArray(0);
+        GL20.glDisableVertexAttribArray(1);
+        GL30.glBindVertexArray(0);
+        tileShader.stop();
     }
 
-    private void renderObject(TexturedModel tm, GObject obj) {
-        shader.loadTransformationMatrix(obj.getTransformation());
-        shader.loadTextureIndex(tm.texture.numberOfRows, obj.textureIndex);
+    private void renderObject(Scene scene, GameObject obj){
+        Sprite sprite = scene.sprites.get(obj.spriteId);
+        if(sprite == null) return;
 
+        tileShader.loadSpriteSheet(sprite);
+        GL13.glBindTexture(GL11.GL_TEXTURE_2D, sprite.texture.textureID);
 
-//        GL30.glBindVertexArray(model.vaoID);
-//        GL20.glEnableVertexAttribArray(0);
-//        GL20.glEnableVertexAttribArray(1);
-
-//        GL13.glActiveTexture(GL13.GL_TEXTURE0);
-//        GL13.glBindTexture(GL11.GL_TEXTURE_2D, texturedModel.texture.textureID);
-        GL11.glDrawElements(GL11.GL_TRIANGLES, tm.model.vertexCount, GL11.GL_UNSIGNED_INT, 0);
-
-//        GL20.glDisableVertexAttribArray(0);
-//        GL20.glDisableVertexAttribArray(1);
-//        GL30.glBindVertexArray(0);
-
+        Matrix4f transform = obj.transformation.asMatrix();
+        tileShader.loadTransformationMatrix(transform);
+        GL11.glDrawElements(GL11.GL_TRIANGLES, rawRectModel.vertexCount, GL11.GL_UNSIGNED_INT, 0);
     }
 
-//    private void renderModel(GObject obj, TexturedModel texturedModel) {
-//        shader.loadTransformationMatrix(obj.getTransformation());
-//
-//
-//        GL30.glBindVertexArray(texturedModel.model.vaoID);
-//        GL20.glEnableVertexAttribArray(0);
-//        GL20.glEnableVertexAttribArray(1);
-//
-//        GL13.glActiveTexture(GL13.GL_TEXTURE0);
-//        GL13.glBindTexture(GL11.GL_TEXTURE_2D, texturedModel.texture.textureID);
-//        GL11.glDrawElements(GL11.GL_TRIANGLES, texturedModel.model.vertexCount, GL11.GL_UNSIGNED_INT, 0);
-//
-//        GL20.glDisableVertexAttribArray(0);
-//        GL20.glDisableVertexAttribArray(1);
-//        GL30.glBindVertexArray(0);
-//
-//    }
+    private void renderTileMapOptimized(Scene scene){
+        for(Integer spriteId : scene.tileMap.tilesOptimized.keySet()){
+            Sprite sprite = scene.sprites.get(spriteId);
+            if(sprite == null) continue;
+
+            tileShader.loadSpriteSheet(sprite);
+            GL13.glBindTexture(GL11.GL_TEXTURE_2D, sprite.texture.textureID);
+
+            List<TileMap.Point> points = scene.tileMap.tilesOptimized.get(spriteId);
+            for(TileMap.Point p : points){
+                getTileTransformation(TRANSFORM_MATRIX, p.x, p.y, p.z, scene.tileMap.tileWidth, scene.tileMap.tileHeight);
+                tileShader.loadTransformationMatrix(TRANSFORM_MATRIX);
+                GL11.glDrawElements(GL11.GL_TRIANGLES, rawRectModel.vertexCount, GL11.GL_UNSIGNED_INT, 0);
+            }
+        }
+    }
+
+    private void renderTileMap(Scene scene){
+        for(int x=0;x<scene.tileMap.width;x++){
+            for(int y=0;y<scene.tileMap.height;y++){
+                for(int z=0;z<scene.tileMap.depth;z++){
+                    Integer texId = scene.tileMap.getTile(x, y, z);
+                    if(texId == null) continue;
+                    Sprite sprite = scene.sprites.get(texId);
+                    if(sprite == null) continue;
+
+//                    tileShader.loadSpriteSheetSize(sprite.texture.numberOfRows);
+                    tileShader.loadSpriteSheet(sprite);
+
+
+                    GL13.glBindTexture(GL11.GL_TEXTURE_2D, sprite.texture.textureID);
+
+                    getTileTransformation(TRANSFORM_MATRIX, x, y, z, scene.tileMap.tileWidth, scene.tileMap.tileHeight);
+                    tileShader.loadTransformationMatrix(TRANSFORM_MATRIX);
+                    GL11.glDrawElements(GL11.GL_TRIANGLES, rawRectModel.vertexCount, GL11.GL_UNSIGNED_INT, 0);
+                }
+            }
+        }
+    }
+
+    private void getTileTransformation(Matrix4f m, int x, int y, int z, float tileWidth, float tileHeight){
+        MathUtils.getTransformation(m,
+                (x + 0.5f) * tileWidth, (y + 0.5f) * tileHeight, z * 0.00001f,
+                tileWidth, tileHeight);
+    }
 
     public void cleanup() {
-        shader.cleanup();
+        tileShader.cleanup();
     }
 
 }

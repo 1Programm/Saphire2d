@@ -17,9 +17,6 @@ public class SaphKeyboard implements IKeyboard {
         else if(action == GLFW.GLFW_RELEASE){
             window.notifyKeyReleased(key);
         }
-        else {
-            System.out.println("### KEYBOARD");
-        }
     }
 
     @Override
